@@ -1,0 +1,52 @@
+state_short,state_full,zip_min,zip_max
+MA,Massachusetts,1001,2791
+RI,Rhode Island,2802,2921
+NH,New Hampshire,3031,3894
+ME,Maine,3901,4992
+VT,Vermont,5001,5906
+CT,Connecticut,6001,6907
+NY,New York,6390,14905
+NJ,New Jersey,7001,8904
+PA,Pennsylvania,15001,19611
+DE,Delaware,19701,19979
+DC,District of Columbia,20001,20037
+VA,Virginia,20105,24656
+MD,Maryland,20601,21921
+WV,West Virginia,24701,26884
+NC,North Carolina,27006,28909
+SC,South Carolina,29001,29945
+GA,Georgia,30002,39897
+FL,Florida,32003,34997
+AL,Alabama,35004,36925
+TN,Tennessee,37010,38588
+MS,Mississippi,38601,39776
+KY,Kentucky,40003,42788
+OH,Ohio,43001,45899
+IN,Indiana,46001,47995
+MI,Michigan,48001,49971
+IA,Iowa,50001,52807
+WI,Wisconsin,53001,54986
+MN,Minnesota,55001,56763
+SD,South Dakota,57001,57794
+ND,North Dakota,58001,58854
+MT,Montana,59001,59937
+IL,Illinois,60002,62999
+MO,Missouri,63005,65810
+KS,Kansas,66002,67954
+NE,Nebraska,68002,69367
+LA,Louisiana,70001,71486
+AR,Arkansas,71601,72959
+OK,Oklahoma,73002,74966
+TX,Texas,75001,79938
+CO,Colorado,80002,81657
+WY,Wyoming,82001,83414
+ID,Idaho,83201,83876
+UT,Utah,84001,84790
+AZ,Arizona,85003,86556
+NM,New Mexico,87001,88435
+NV,Nevada,89001,89883
+CA,California,90001,96161
+HI,Hawaii,96701,96863
+OR,Oregon,97001,97918
+WA,Washington,98001,99403
+AK,Alaska,99501,99929
