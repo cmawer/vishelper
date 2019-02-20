@@ -10,7 +10,7 @@ import scipy
 import matplotlib.cm as cm
 
 
-class visDF:
+class VisDF:
 
     def __init__(self, df, column_labels=None, labels=None, cluster_label=None,
                  index=None, numeric_columns=None, nonnumeric_columns=None,
@@ -176,7 +176,7 @@ class visDF:
 
     def subplots(self, columns_to_plot, kind, color_by=None, sort_by=None, ascending=False,
                  layout=None, titles=None, main_title=None, xlim=None, ylim=None,
-                 legend_labels=None, legend_order=None,
+                 legend_labels=None, legend_order=None, figsize=(16, 10),
                  counts=False, top_counts=None, min_counts=None,
                  **kwargs):
         """Create figure with many subplots at once from dataframe.
@@ -263,11 +263,6 @@ class visDF:
             raise ValueError(
                 'layout provide does not have enough space for all desired plots')
 
-        if 'figsize' in kwargs.keys():
-            figsize = kwargs.pop('figsize')
-        else:
-            figsize = vh.formatting['figure.figsize']
-
         # Add colors to kwargs if column to color by provided
         if color_by is not None:
             kwargs["color"] = self.dict_to_colors(color_by, df_to_plot)
@@ -353,7 +348,7 @@ class visDF:
         #                     ax = vh.plot([df[onex] for onex in plot_dict[x]],
         #                                  y=[df[oney] for oney in plot_dict[y]],
         #                                  kind=k, ax=ax)
-        fig.tight_layout()
+
         sup_x = vh.formatting['suptitle.x'] \
             if 'sup_x' not in kwargs.keys() \
             else kwargs.pop('sup_x')
@@ -364,7 +359,7 @@ class visDF:
         if main_title:
             plt.suptitle(main_title, x=sup_x, y=sup_y,
                          size=vh.formatting['suptitle.size'])
-        #         self.logger.info("Hello " + self.name)
+        fig.tight_layout()
         return fig, axes
 
     def fscore_by_feature(self, category_column):
