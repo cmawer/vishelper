@@ -38,6 +38,7 @@ cmaps = {'diverging': sns.diverging_palette(244.4, 336.7, s=71.2, l=41.6, n=20),
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 map_to_days = dict(zip(range(7), days_of_week))
 
+
 def listify(l, multiplier=1, order=1):
     l = l if (isinstance(l, list) or isinstance(l, np.ndarray)) else [
                                                                          l] * multiplier
@@ -336,22 +337,35 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
 
         plot_function: Default None. If "kind" is not given, can provide a plot function with the
             form plot_function(x, y, ax, **kwargs) or plot_function(x, ax, **kwargs)
-        ax:
-        xlabel:
-        ylabel:
-        title:
-        legend:
-        legend_kwargs:
-        ticks:
-        labels:
-        color:
-        color_data:
-        figsize:
-        xlim:
-        ylim:
-        **kwargs:
+        ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`, optional): Matplotlib axes handle. Default is None
+            and a new `ax` is generated along with the `fig`.
+        xlabel (:obj:`str`, optional): Label for x axis. Default None.
+        ylabel (:obj:`str`, optional): Label for y axis. Default None.
+        title (:obj:`str`, optional): Plot title. Default None.
+        legend (bool, optional): A legend will be displayed if legend=True or legend=None and more than one thing
+            is being plot. Default None.
+        legend_kwargs (:obj`dict`, optional): Dictionary of keyword arguments for legend (see `legend` for more when
+            legend will be displayed). Default None.
+        labels (:obj:`list` of :obj:`str`, optional): List of labels for legend. Default None. If legend is True,
+            and no labels are provided, labels will be "Set N" where N is the ordering of the inputs.
+        ticks (:obj:`list` of :obj:`str`, optional): List of tick labels. Default None.
+        color (:obj:`str` or :obj:`list` of :obj:`str`, optional): Color to plot. List of colors if there is more than
+            one thing being plot. Default is None, in which case, if color_data is also None, default colors
+            from `vishelper.formatting["darks"]` and then `vishelper.formatting["lights"]` will be used.
+        color_data (:obj:`list` of :obj:`str`, optional): If provided, list should be the same length of the data,
+            providing an individual color for each data point. Default None in which case all points will be colored
+            according to `color` argument.
+        figsize (tuple, optional): Figure size. Default is None and plot will be sized based on
+            `vishelper.formatting['figure.figsize']`.
+        xlim (tuple, optional): Tuple of minimum and maximum x values to plot (xmin, xmax). Default is None and
+            matplotlib chooses these values.
+        ylim (tuple, optional): Tuple of minimum and maximum y values to plot (ymin, ymax). Default is None and
+            matplotlib chooses these values.
+        **kwargs: These kwargs are any that are relevant to the plot kind provided.
 
     Returns:
+        fig (matplotlib.figure.Figure): Matplotlib figure object
+        ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`): Axes object with the plot(s)
 
     """
     if y is not None:
@@ -374,7 +388,7 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
         else:
             plot_color = color_data
     elif color is not None:
-        plot_color = color
+        plot_color = [color] if type(color) == str else color
     else:
         plot_color = formatting["darks"] + formatting['lights']
 
