@@ -11,58 +11,59 @@ import matplotlib.cm as cm
 
 
 class VisDF:
+    """ Easily create typical visualizations of data in a pandas dataframe.
+
+            This class performs a number of plotting tasks for pandas data frames
+            including easy sub-plotting and consistent axes labeling.
+
+            Args:
+                df (pandas dataframe): Data to be plotted
+                column_labels (:obj:`dict`): Dictionary containing mappings of
+                    columns of dataframe and corresponding labels to be
+                    used instead when plotting for axes labels and legend.
+                    If None, column names  will have '_' removed and the first
+                    letter capitalized (e.g. "path_length" --> "Path length")
+                cluster_label (:obj:`str`, optional): If it exists, the name of
+                    the column that gives cluster or group assignments (and is
+                    not a feature).
+                index (:obj:`str` or :obj:`list` of :obj:`str`, optional):
+                    Name of identifying column such as customer id or transaction
+                    id or other column that should not be analyzed.
+                numeric_columns (:obj:`list` of :obj:`str`, optional): List of
+                    column names corresponding to numeric fields. If not provided,
+                    this list will be assessed by data type of each column and
+                    will exclude the index and cluster label, if given.
+                nonnumeric_columns (:obj:`list` of :obj:`str`, optional): List of
+                    column names corresponding to non-numeric fields. If not provided,
+                    this list will be assessed by data type of each column and
+                    will exclude the index and cluster label, if given.
+                color_dict (:obj:`dict`): Optional. Keys correspond to categorical
+                    columns where consistent coloring by category is desired.
+                    Each key has a dictionary as it's value with the category names
+                    and corresponding colors to use. Dictionary structure is:
+                    {'column_name':{'category1': '#colorx', 'category2': '#colory'}}
+                columns_to_color (:obj:`list` of :obj:`str`, optional): List of
+                    names of categorical columns to apply consistent coloring to.
+                    Colors to assign to each category will be provided by the
+                    `colors` attribute.
+                colors (:obj:`list`): List of colors to cycle through in plotting (if
+                    None provided, will use defaults defined in config file).
+                univariate_ylabels (:obj:`dict`): Dictionary of univariate plot
+                    types and corresponding y-labels to use. Default is
+                    dict(hist='Count', barh='Count').
+                scale (:bool:): Default True. If True, scales the numeric columns
+                    of the dataframe and stores them in the `scaled` attribute.
+                pca (:bool:): Default True. If True, calculates the  principal
+                    components of the numeric data and stores them in the
+                    `pca` attribute.
+            """
 
     def __init__(self, df, column_labels=None, labels=None, cluster_label=None,
                  index=None, numeric_columns=None, nonnumeric_columns=None,
                  color_dict=None, columns_to_color=None,
                  colors=None, univariate_ylabels=None,
                  scale=False, pca=False):
-        """ Easily create typical visualizations of data in a pandas dataframe.
 
-        This class performs a number of plotting tasks for pandas data frames
-        including easy sub-plotting and consistent axes labeling.
-
-        Args:
-            df (pandas dataframe): Data to be plotted
-            column_labels (:obj:`dict`): Dictionary containing mappings of
-                columns of dataframe and corresponding labels to be
-                used instead when plotting for axes labels and legend.
-                If None, column names  will have '_' removed and the first
-                letter capitalized (e.g. "path_length" --> "Path length")
-            color_dict (:obj:`dict`): Optional. Keys correspond to categorical
-                columns where consistent coloring by category is desired.
-                Each key has a dictionary as it's value with the category names
-                and corresponding colors to use. Dictionary structure is:
-                {'column_name':{'category1': '#colorx', 'category2': '#colory'}}
-            columns_to_color (:obj:`list` of :obj:`str`: Optional. List of
-                names of categorical columns to apply consistent coloring to.
-                Colors to assign to each category will be provided by the
-                `colors` attribute.
-            colors (:obj:`list`): List of colors to cycle through in plotting (if
-                None provided, will use defaults defined in config file).
-            univariate_ylabels (:obj:`dict`): Dictionary of univariate plot
-                types and corresponding y-labels to use. Default is
-                dict(hist='Count', barh='Count').
-            numeric_columns (:obj:`list` of :obj:`str`, optional): List of
-                column names corresponding to numeric fields. If not provided,
-                this list will be assessed by data type of each column and
-                will exclude the index and cluster label, if given.
-            nonnumeric_columns (:obj:`list` of :obj:`str`, optional): List of
-                column names corresponding to non-numeric fields. If not provided,
-                this list will be assessed by data type of each column and
-                will exclude the index and cluster label, if given.
-            cluster_label (:obj:`str`, optional): If it exists, the name of
-                the column that gives cluster or group assignments (and is
-                not a feature).
-            index (:obj:`str` or :obj:`list` of :obj:`str`, optional):
-                Name of identifying column such as customer id or transaction
-                id or other column that should not be analyzed.
-            scale (:bool:): Default True. If True, scales the numeric columns
-                of the dataframe and stores them in the `scaled` attribute.
-            pca (:bool:): Default True. If True, calculates the  principal
-                components of the numeric data and stores them in the
-                `pca` attribute.
-        """
         self.df = df
         if colors is None:
             colors = vh.formatting['darks']
@@ -181,8 +182,7 @@ class VisDF:
                  **kwargs):
         """Create figure with many subplots at once from dataframe.
 
-        This method will create a figure with subplots based on the column
-         names inputted.
+        This method will create a figure with subplots based on the column names inputted.
 
         Args:
             columns_to_plot (:obj:`list` of [:obj:`str` or :obj:`lists`): The
@@ -213,9 +213,9 @@ class VisDF:
             layout (:obj:`tuple`, optional):  # of rows x # columns. If not
                 given, the layout will default to N x 2 where N is calculated
                 based on length of `columns_to_plot`
+            main_title (:obj:`str`, optional): Optional, title for the entire figure.
             titles (:obj:`list` of :obj:`str, optional): List of titles for each subplot
                 corresponding to the order of `columns_to_plot`
-            main_title (:obj:`str`, optional): Optional, title for the entire figure.
             counts (:bool:): If True, plot :py:meth:`pd.DataFrame.value_counts()`
                 is plotted rather than the data frame data. This is typically
                 used for categorical fields.
@@ -235,6 +235,8 @@ class VisDF:
 
                 TO DO: something to allow for keyword arguments to only be fed
                 functions that they apply to
+
+
 
         Returns:
             fig: :python:obj:matplotlib.figure.Figure`

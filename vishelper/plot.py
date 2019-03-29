@@ -5,6 +5,7 @@ import seaborn as sns
 import matplotlib as mpl
 import logging
 from matplotlib.colors import LogNorm
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 formatting = {'font.size': 16,
               'tick.labelsize': 14,
               'tick.size': 10,
@@ -37,6 +38,51 @@ cmaps = {'diverging': sns.diverging_palette(244.4, 336.7, s=71.2, l=41.6, n=20),
 
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 map_to_days = dict(zip(range(7), days_of_week))
+
+
+def color_continuous(df, column_to_color, new_color_column="color", clip=True, log10=False,
+                     cmap=None, return_all=False, **kwargs):
+    vmin = df[column_to_color].min() if "vmin" not in kwargs else kwargs["vmin"]
+    vmax = df[column_to_color].max() if "vmax" not in kwargs else kwargs["vmax"]
+    cmap = mpl.cm.OrRd if cmap is None else cmap
+
+    norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=clip)
+    mapper = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
+
+    if log10:
+        df[new_color_column] = df[column_to_color].apply(
+            lambda x: "#%02x%02x%02x" % tuple(int(255*n) for n in mapper.to_rgba(np.log10(x))[:-1]))
+    else:
+        df[new_color_column] = df[column_to_color].apply(
+            lambda x: "#%02x%02x%02x" % tuple(int(255 * n) for n in mapper.to_rgba(x)[:-1]))
+
+    if return_all:
+        return df, cmap, norm
+    else:
+        return df
+
+
+def color_categorical(df, column_to_color, new_color_column="color", colors=None):
+    colors = vh.formatting["darks"] if colors is None else colors
+    categories = df.column_to_color.unique()
+    n = len(categories)
+    if len(colors) < n:
+        raise ValueError("There are %i unique values but only %i colors were given" % (n, len(colors)))
+    color_map = dict(zip(categories, colors[:n]))
+
+    df[new_color_column] = df[column_to_color].apply(lambda x: color_map[x])
+
+    return df
+
+
+def create_colorbar(ax, cmap, norm, where="right", size='5%', pad=0.25, label=None):
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes(where, size=size, pad=pad)
+    cbar = mpl.colorbar.ColorbarBase(cax, cmap=cmap,
+                                     norm=norm)
+    if label is not None:
+        cbar.set_label(label)
+    return ax
 
 
 def listify(l, multiplier=1, order=1):
@@ -241,9 +287,25 @@ def barh(x, y, ax=None, color=None, label=None, **kwargs):
     return fig, ax
 
 
-def fake_legend(ax, legend_labels, colors, marker=None, size=None, linestyle="", loc="best", **kwargs):
+def fake_legend(ax, legend_labels, colors, marker=None, size=None, linestyle="", where="best", **kwargs):
+
+    locations = dict(right=dict(loc='center left', bbox_to_anchor=(1, 0.5)),
+                     below=dict(loc='upper center', bbox_to_anchor=(0.5, -0.1)),
+                     best=dict(loc="best"))
+
+    if "loc" not in kwargs and "bbox_to_anchor" not in kwargs:
+        location = locations[where]
+    else:
+        location = {}
+        if "loc" in kwargs:
+            location["loc"] = kwargs.pop("loc")
+        if "bbox_to_anchor" in kwargs:
+            location["bbox_to_anchor"] = kwargs.pop("bbox_to_anchor")
+
     marker = formatting['legend.marker'] if marker is None else marker
     size = formatting['markersize'] if size is None else size
+
+    fontsize = formatting['legend.fontsize'] if "fontsize" not in kwargs else kwargs.pop("fontsize")
 
     for col, lab in zip(colors, legend_labels):
         ax.plot([], linestyle=linestyle, marker=marker, c=col, label=lab, markersize=size);
@@ -252,7 +314,8 @@ def fake_legend(ax, legend_labels, colors, marker=None, size=None, linestyle="",
     
     ax.legend(lines[:len(legend_labels)],
               labels[:len(legend_labels)],
-              loc=loc, **kwargs);
+              fontsize=fontsize,
+              **location, **kwargs);
 
     return ax
 
@@ -294,7 +357,7 @@ def heatmap(df, ax=None,
     return fig, ax
 
 
-def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, **kwargs):
+def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, color_map=None, xrotation=90, **kwargs):
     if ax is None:
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
     else:
@@ -305,6 +368,20 @@ def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, **kwargs):
         y = y[0]
     ax = sns.boxplot(x=x, y=y, data=data, palette=palette, hue=hue, ax=ax)
 
+    if white or color_map is not None:
+        for i, box in enumerate(ax.artists):
+            if color_map is not None:
+                label = ax.get_xticklabels()[i].get_text()
+                color = color_map[label]
+            else:
+                color = "white"
+            box.set_edgecolor('black')
+            box.set_facecolor(color)
+
+            # iterate over whiskers and median lines
+            for j in range(6 * i, 6 * (i + 1)):
+                ax.lines[j].set_color('black')
+    _ = ax.set_xticklabels(ax.get_xticklabels(), rotation=xrotation)
     if fig is None:
         return ax
     else:
@@ -456,3 +533,16 @@ def labelfy(labels):
         labels = [' '.join(lab.split('_')).capitalize() for lab in labels]
 
     return labels
+
+
+def column_to_colors(df, column, colors=None):
+
+    if colors is None:
+        colors = formatting["darks"] + formatting["mediums"]
+    cats = df[column].unique()
+
+    color_map = dict(zip(cats, colors[:len(cats)]))
+    colors = df[column].map(color_map)
+    return colors, color_map
+
+

@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>vishelper package &mdash; vishelper 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> vishelper
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="plot.html">vishelper.plot.plot function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VisDF.html">vishelper.dfplot</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">vishelper</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>vishelper package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/vishelper/vishelper.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vishelper-package">
+<h1>vishelper package<a class="headerlink" href="#vishelper-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-vishelper.cluster">
+<span id="vishelper-cluster-module"></span><h2>vishelper.cluster module<a class="headerlink" href="#module-vishelper.cluster" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="vishelper.cluster.create_labels">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">create_labels</code><span class="sig-paren">(</span><em>z</em>, <em>features_in</em>, <em>levels</em>, <em>criteria='distance'</em>, <em>feature_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#create_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.create_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Labels each observation according to what cluster number it would fall into under the specified
+criteria and level(s).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>z</strong> – The hierarchical clustering encoded with the matrix returned by Scipy’s linkage function.</li>
+<li><strong>features_in</strong> – list of features for each sample or dataframe</li>
+<li><strong>levels</strong> – list of different levels to label samples according to. Will depend on criteria used.
+If criteria = ‘distance’, clusters are formed so that observations in a given cluster
+have a cophenetic distance no greater than the level(s) provided. If criteria =
+‘maxcluster’, cuts the dendrogram so that no more than the level number of clusters
+is formed. See
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.fcluster.html">http://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.fcluster.html</a>
+for more options.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Criteria:</th><td class="field-body"><p class="first">string referring to which criterion to use for creating clusters. “distance” and “maxclusters”
+are two more commonly used. See param levels above. Other options can be found at
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.fcluster.html">http://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.fcluster.html</a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Feature_names:</th><td class="field-body"><p class="first last">list of labels corresponding to the features to create pandas dataframe for output if
+dataframe is not provided.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns: features: Pandas dataframe with feature values for each observation as well as assigned cluster</dt>
+<dd>number for each specified level. Cluster assignment columns are labeled by str(level).</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.cluster.dendrogram">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">dendrogram</code><span class="sig-paren">(</span><em>z</em>, <em>xlabel='Observations'</em>, <em>thresh_factor=0.5</em>, <em>remove_ticks=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#dendrogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.dendrogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a dendrogram from . Colors clusters below <a href="#id21"><span class="problematic" id="id22">thresh_</span></a>
+factor*max(cophenetic distance).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>z</strong> – The hierarchical clustering encoded with the matrix returned by Scipy’s linkage function.</li>
+<li><strong>xlabel</strong> – String for xlabel of figure</li>
+<li><strong>thresh_factor</strong> – Colors clusters according those formed by cutting the dendrogram at
+thresh_factor*max(cophenetic distance)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: R (see Scipy dendrogram docs).
+Displays: Dendrogram.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.cluster.heatmap_pca">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">heatmap_pca</code><span class="sig-paren">(</span><em>V</em>, <em>normalize=True</em>, <em>n_feats=None</em>, <em>n_comps=None</em>, <em>cmap=None</em>, <em>feature_names=None</em>, <em>transpose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#heatmap_pca"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.heatmap_pca" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a heatmap of the composition of the principal components given
+by V. If normalize is left as default (True), the magnitude of the
+components in V will be normalized to give a percent composition of each
+feature in V.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>V</strong> – list of list. PCA components. N components x M features.</li>
+<li><strong>normalize</strong> – optional boolean, default True, whether to normalize V
+to relative weights.</li>
+<li><strong>n_feats</strong> – optional int - number of features to include in figure.</li>
+<li><strong>n_comps</strong> – optional int - number of components to include in figure.</li>
+<li><strong>feature_names</strong> – optional list of strings to include feature names in
+axis labels. Will default to ‘Feature 1’,’Feature 2’,
+etc if not specified.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns nothing, displays a figure.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.cluster.interactive_visualize">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">interactive_visualize</code><span class="sig-paren">(</span><em>features</em>, <em>levels</em>, <em>feature_names</em>, <em>slider_value=None</em>, <em>bins=20</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>log=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#interactive_visualize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.interactive_visualize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a visualization from visualize_clusters() that can be changed according to a level chosen
+by a slider bar.</p>
+<dl class="docutils">
+<dt>:param features :Pandas dataframe with rows for each observation, columns for each feature value and</dt>
+<dd>cluster label for each level (see create_labels()).</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>levels</strong> – Levels that cluster labels were assigned to observations (see create_labels())</li>
+<li><strong>feature_names</strong> – list of strings - names of features that histograms are desired.</li>
+<li><strong>slider_value</strong> – Optional - value for level which initial visualization is wanted (initial slider value)</li>
+<li><strong>bins</strong> – optional int or list of values - argument for bins in histogram function. Int for number of bins
+or list of bin centers.</li>
+<li><strong>xlim</strong> – [x_min, x_max] - window for x values. Use if you want to standardize x range plotted.</li>
+<li><strong>ylim</strong> – [y_min, y_max] - window for y values. Use if you want to standardize y range plotted.</li>
+<li><strong>log</strong> – optional. Default False. If true, makes histogram y-axis on log scale.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.cluster.reset_mpl_format">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">reset_mpl_format</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#reset_mpl_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.reset_mpl_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reapplies the matplotlib format update.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.cluster.separate">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">separate</code><span class="sig-paren">(</span><em>features</em>, <em>level</em>, <em>feature_name</em>, <em>minimum_population=10</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.separate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Separates features into lists based on their cluster label and separates
+out clusters less than the minimum population in size as outliers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>features</strong> – Pandas dataframe with rows for each observation, columns for each feature value and
+cluster label for each level (see create_labels()).</li>
+<li><strong>level</strong> – Level at which you want to separate observations into groups.</li>
+<li><strong>feature_name</strong> – Desired feature for grouping.</li>
+<li><strong>minimum_population</strong> – Minimum population for which a labeled cluster can be considered a full
+cluster. Any cluster which has a lower population will be considered
+a group of outliers.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns: sep_features = list of list of feature values for each labeled group greater</dt>
+<dd><blockquote class="first">
+<div>than min_population in size.</div></blockquote>
+<dl class="last docutils">
+<dt>outliers = feature values for any observations in cluster which has a size smaller than</dt>
+<dd>minimum population.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.cluster.visualize_clusters">
+<code class="descclassname">vishelper.cluster.</code><code class="descname">visualize_clusters</code><span class="sig-paren">(</span><em>features</em>, <em>level</em>, <em>feature_names</em>, <em>bins=20</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>log=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/cluster.html#visualize_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.cluster.visualize_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a histogram of the number of samples assigned to each cluster at
+a given cophentic distance and the distribution of the features for each
+cluster. This assumes labels exist in the features dataframe in
+column str(level).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.dfplot">
+<span id="vishelper-dfplot-module"></span><h2>vishelper.dfplot module<a class="headerlink" href="#module-vishelper.dfplot" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="vishelper.dfplot.VisDF">
+<em class="property">class </em><code class="descclassname">vishelper.dfplot.</code><code class="descname">VisDF</code><span class="sig-paren">(</span><em>df</em>, <em>column_labels=None</em>, <em>labels=None</em>, <em>cluster_label=None</em>, <em>index=None</em>, <em>numeric_columns=None</em>, <em>nonnumeric_columns=None</em>, <em>color_dict=None</em>, <em>columns_to_color=None</em>, <em>colors=None</em>, <em>univariate_ylabels=None</em>, <em>scale=False</em>, <em>pca=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Easily create typical visualizations of data in a pandas dataframe.</p>
+<p>This class performs a number of plotting tasks for pandas data frames
+including easy sub-plotting and consistent axes labeling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>pandas dataframe</em>) – Data to be plotted</li>
+<li><strong>column_labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>) – Dictionary containing mappings of
+columns of dataframe and corresponding labels to be
+used instead when plotting for axes labels and legend.
+If None, column names  will have ‘_’ removed and the first
+letter capitalized (e.g. “path_length” –&gt; “Path length”)</li>
+<li><strong>cluster_label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – If it exists, the name of
+the column that gives cluster or group assignments (and is
+not a feature).</li>
+<li><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – Name of identifying column such as customer id or transaction
+id or other column that should not be analyzed.</li>
+<li><strong>numeric_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – List of
+column names corresponding to numeric fields. If not provided,
+this list will be assessed by data type of each column and
+will exclude the index and cluster label, if given.</li>
+<li><strong>nonnumeric_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – List of
+column names corresponding to non-numeric fields. If not provided,
+this list will be assessed by data type of each column and
+will exclude the index and cluster label, if given.</li>
+<li><strong>color_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>) – Optional. Keys correspond to categorical
+columns where consistent coloring by category is desired.
+Each key has a dictionary as it’s value with the category names
+and corresponding colors to use. Dictionary structure is:
+{‘column_name’:{‘category1’: ‘#colorx’, ‘category2’: ‘#colory’}}</li>
+<li><strong>columns_to_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – List of
+names of categorical columns to apply consistent coloring to.
+Colors to assign to each category will be provided by the
+<cite>colors</cite> attribute.</li>
+<li><strong>colors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>) – List of colors to cycle through in plotting (if
+None provided, will use defaults defined in config file).</li>
+<li><strong>univariate_ylabels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>) – Dictionary of univariate plot
+types and corresponding y-labels to use. Default is
+dict(hist=’Count’, barh=’Count’).</li>
+<li><strong>(</strong> (<em>pca</em>) – bool:): Default True. If True, scales the numeric columns
+of the dataframe and stores them in the <cite>scaled</cite> attribute.</li>
+<li><strong>(</strong> – bool:): Default True. If True, calculates the  principal
+components of the numeric data and stores them in the
+<cite>pca</cite> attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.add_color_dict">
+<code class="descname">add_color_dict</code><span class="sig-paren">(</span><em>column_name</em>, <em>colors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.add_color_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.add_color_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assign colors to categories within a defined column of the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>column_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of categorical column in the data.</li>
+<li><strong>colors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – Optional. Colors to be assigned
+to the categories. If not provided, will use <cite>self.colors</cite>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns: Nothing</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.category_heatmap">
+<code class="descname">category_heatmap</code><span class="sig-paren">(</span><em>category</em>, <em>variables=None</em>, <em>transpose=False</em>, <em>measure=&lt;function mean&gt;</em>, <em>metric='actual'</em>, <em>category_dict=None</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>cat_order=None</em>, <em>log10=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.category_heatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.category_heatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.compare_categories">
+<code class="descname">compare_categories</code><span class="sig-paren">(</span><em>category</em>, <em>variables=None</em>, <em>measure=&lt;function mean&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.compare_categories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.compare_categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.dict_to_colors">
+<code class="descname">dict_to_colors</code><span class="sig-paren">(</span><em>column_name</em>, <em>df=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.dict_to_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.dict_to_colors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.fscore_by_feature">
+<code class="descname">fscore_by_feature</code><span class="sig-paren">(</span><em>category_column</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.fscore_by_feature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.fscore_by_feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prioritize categorical x continuous interactions to investigate.</p>
+<p>The F-test in one-way analysis of variance is used to assess whether
+the expected values of the variable within the categories in the
+category column differ from each other. A higher f-value or lower
+p-value indicates a bigger difference between the categories in
+a given variable.</p>
+<p>This is <strong>not</strong> meant to be used to make any statistically validated
+claims about the variables as no assumptions have been considered.
+Moreover, no adjustment has been made for making doing multiple
+tests. This should <a href="#id1"><span class="problematic" id="id2">*</span></a>only * be used as a directional signal of
+which variables may interact most with the categorical column
+provided and which should be prioritized for visual investigation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>category</strong> – Column name of which variable to group observations by
+and compare distributes of variables across.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt><a href="#id3"><span class="problematic" id="id4">:python:obj:`pandas.core.frame.DataFrame`</span></a> of variables and</dt>
+<dd>corresponding f-score and p-value.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">fps</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.labeled_scatter">
+<code class="descname">labeled_scatter</code><span class="sig-paren">(</span><em>category=None</em>, <em>x=None</em>, <em>y=None</em>, <em>pca=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.labeled_scatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.labeled_scatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for visualizing clusters in 2D.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vishelper.dfplot.VisDF.pca">
+<code class="descname">pca</code><em class="property"> = None</em><a class="headerlink" href="#vishelper.dfplot.VisDF.pca" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pandas dataframe of the principal components of the numeric
+columns of the data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.percent_above_below">
+<code class="descname">percent_above_below</code><span class="sig-paren">(</span><em>category</em>, <em>quantile_threshold=0.5</em>, <em>how='above'</em>, <em>exclude=None</em>, <em>category_dict=None</em>, <em>transpose=False</em>, <em>cluster=True</em>, <em>variables=None</em>, <em>xlabel=' '</em>, <em>ylabel=' '</em>, <em>cat_order=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.percent_above_below"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.percent_above_below" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>category</strong> – </li>
+<li><strong>quantile_threshold</strong> – </li>
+<li><strong>how</strong> – </li>
+<li><strong>exclude</strong> – </li>
+<li><strong>category_dict</strong> – </li>
+<li><strong>transpose</strong> – </li>
+<li><strong>cluster</strong> – </li>
+<li><strong>variables</strong> – </li>
+<li><strong>xlabel</strong> – </li>
+<li><strong>ylabel</strong> – </li>
+<li><strong>cat_order</strong> – </li>
+<li><strong>**kwargs</strong> – </li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="vishelper.dfplot.VisDF.scaled">
+<code class="descname">scaled</code><em class="property"> = None</em><a class="headerlink" href="#vishelper.dfplot.VisDF.scaled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pandas dataframe of numeric data scaled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.subplots">
+<code class="descname">subplots</code><span class="sig-paren">(</span><em>columns_to_plot</em>, <em>kind</em>, <em>color_by=None</em>, <em>sort_by=None</em>, <em>ascending=False</em>, <em>layout=None</em>, <em>titles=None</em>, <em>main_title=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>legend_labels=None</em>, <em>legend_order=None</em>, <em>figsize=(16</em>, <em>10)</em>, <em>counts=False</em>, <em>top_counts=None</em>, <em>min_counts=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.subplots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.subplots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create figure with many subplots at once from dataframe.</p>
+<p>This method will create a figure with subplots based on the column names inputted.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>columns_to_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of [<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">lists</span></code>) – The
+column(s) to plot in each figure.</li>
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – What type of plot
+to plot. If a string, the plot type is used for each subplot.
+If a list, it should be the same length as
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">columns_to_plot</span></code> and describe what type of
+plot to use in each subplot.</li>
+<li><strong>layout</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, optional) – # of rows x # columns. If not
+given, the layout will default to N x 2 where N is calculated
+based on length of <cite>columns_to_plot</cite></li>
+<li><strong>main_title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – Optional, title for the entire figure.</li>
+<li><strong>(</strong> (<em>min_counts</em>) – bool:): If True, plot <code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.value_counts()</span></code>
+is plotted rather than the data frame data. This is typically
+used for categorical fields.</li>
+<li><strong>(</strong> – int:, optional): If <cite>counts</cite> is True and this argument
+is provided, only the first <cite>top_counts</cite> number of rows from the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.value_counts()</span></code> data when the dataframe
+is sorted from highest to lowest counts.</li>
+<li><strong>(</strong> – int:, optional): If <cite>counts</cite> is True and this argument
+is provided, only the first <cite>min_counts</cite> number of rows from the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">pd.DataFrame.value_counts()</span></code> data when the dataframe
+is sorted from lowest to highest counts.</li>
+<li><strong>**kwargs</strong> – <p>Any other key word arguments will be fed into the
+plotting function and should be arguments to the core
+<a href="#id5"><span class="problematic" id="id6">:python:mod:`matplotlib`</span></a> plotting function (e.g. <cite>bin</cite> for
+histograms). Currently cannot feed arguments that don’t apply
+to all plot kinds being used (as they are automatically filled in).</p>
+<p>TO DO: something to allow for keyword arguments to only be fed
+functions that they apply to</p>
+<dl class="docutils">
+<dt><em>Univariate only</em>: If only plotting univariate plots,</dt>
+<dd><cite>columns_to_plot</cite> will look like
+[‘column1’,’column2’,…, ‘columnN’]  where ‘column1’ will
+be plot in figure 1, ‘column2’ in figure 2, etc.</dd>
+<dt><a href="#id7"><span class="problematic" id="id8">**</span></a>Bivariate only*: If only plotting bivariate plots,</dt>
+<dd><cite>columns_to_plot</cite> will look like
+[[‘columnx1’, ‘columny1’],[‘columnx2’, ‘columny2], …, ]
+where ‘columnx1’ will be plotted vs ‘columny1’ in figure 1.</dd>
+<dt><em>Mix of univariate and bivariate</em>: If plotting a mix of plot</dt>
+<dd>types, <cite>columns_to_plot</cite> will look something like:
+[‘column1’, [‘columnx2’, ‘columny2’], ‘column3’,…]. Note
+that  this will require a mix of plot types and currently
+<a href="#id9"><span class="problematic" id="id10">**</span></a>kwargs cannot be provided that don’t work in all
+plot functions.</dd>
+</dl>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">:python:obj:matplotlib.figure.Figure`
+axes: <a href="#id11"><span class="problematic" id="id12">:python:obj:`numpy.ndarray`</span></a> of <a href="#id13"><span class="problematic" id="id14">:python:obj:`numpy.ndarray`</span></a> of <a href="#id15"><span class="problematic" id="id16">:python:obj:`matplotlib.axes._subplots.AxesSubplot`</span></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">fig</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vishelper.dfplot.VisDF.to_labels">
+<code class="descname">to_labels</code><span class="sig-paren">(</span><em>columns</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#VisDF.to_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.VisDF.to_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert column names to figure labels.</p>
+<p>Converts a list of column names into labels based on either the
+provided dictionary <cite>column_labels</cite> or if not provided, based on the
+<cite>labelfy</cite> function which replaces undersores with spaces and
+capitalizes the first letter of the string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>) – List of column names to convert
+to labels.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>List of labels corresponding to</dt>
+<dd>the provdied column names.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">labels (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.dfplot.frac_outside_threshold">
+<code class="descclassname">vishelper.dfplot.</code><code class="descname">frac_outside_threshold</code><span class="sig-paren">(</span><em>group</em>, <em>thresholds</em>, <em>how='above'</em>, <em>exclude=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/dfplot.html#frac_outside_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.dfplot.frac_outside_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for computing the</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.geo">
+<span id="vishelper-geo-module"></span><h2>vishelper.geo module<a class="headerlink" href="#module-vishelper.geo" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="vishelper.geo.add_lat_lng">
+<code class="descclassname">vishelper.geo.</code><code class="descname">add_lat_lng</code><span class="sig-paren">(</span><em>df</em>, <em>lat_col='lat'</em>, <em>lng_col='lng'</em>, <em>color_col=None</em>, <em>color_how=None</em>, <em>colors=None</em>, <em>fmap=None</em>, <em>fill=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#add_lat_lng"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.add_lat_lng" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.basic_map">
+<code class="descclassname">vishelper.geo.</code><code class="descname">basic_map</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#basic_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.basic_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.color_categorical">
+<code class="descclassname">vishelper.geo.</code><code class="descname">color_categorical</code><span class="sig-paren">(</span><em>df</em>, <em>color_col</em>, <em>colors=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#color_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.color_categorical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.color_continuous">
+<code class="descclassname">vishelper.geo.</code><code class="descname">color_continuous</code><span class="sig-paren">(</span><em>df</em>, <em>color_col</em>, <em>clip=True</em>, <em>log10=False</em>, <em>cmap=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#color_continuous"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.color_continuous" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.plot_map">
+<code class="descclassname">vishelper.geo.</code><code class="descname">plot_map</code><span class="sig-paren">(</span><em>df</em>, <em>variable</em>, <em>geo_column</em>, <em>geo_type=None</em>, <em>path_to_geo=None</em>, <em>key_on=None</em>, <em>legend_name=None</em>, <em>reset=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#plot_map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.plot_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.plot_subset">
+<code class="descclassname">vishelper.geo.</code><code class="descname">plot_subset</code><span class="sig-paren">(</span><em>plot_function</em>, <em>df</em>, <em>option</em>, <em>option_column</em>, <em>kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#plot_subset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.plot_subset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.slider_interact">
+<code class="descclassname">vishelper.geo.</code><code class="descname">slider_interact</code><span class="sig-paren">(</span><em>plot_function</em>, <em>df</em>, <em>options</em>, <em>option_column</em>, <em>initial_option=None</em>, <em>option_label=None</em>, <em>disabled=False</em>, <em>button_style=''</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#slider_interact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.slider_interact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.to_geo">
+<code class="descclassname">vishelper.geo.</code><code class="descname">to_geo</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="headerlink" href="#vishelper.geo.to_geo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.geo.to_state_name">
+<code class="descclassname">vishelper.geo.</code><code class="descname">to_state_name</code><span class="sig-paren">(</span><em>df</em>, <em>column</em>, <em>new_column</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/geo.html#to_state_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.geo.to_state_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plot">
+<span id="vishelper-plot-module"></span><h2>vishelper.plot module<a class="headerlink" href="#module-vishelper.plot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="vishelper.plot.add_dline">
+<code class="descclassname">vishelper.plot.</code><code class="descname">add_dline</code><span class="sig-paren">(</span><em>ax</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#add_dline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.add_dline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.add_hline">
+<code class="descclassname">vishelper.plot.</code><code class="descname">add_hline</code><span class="sig-paren">(</span><em>ax</em>, <em>y</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#add_hline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.add_hline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.add_labels">
+<code class="descclassname">vishelper.plot.</code><code class="descname">add_labels</code><span class="sig-paren">(</span><em>ax</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>title=None</em>, <em>main_title=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#add_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.add_labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.add_vline">
+<code class="descclassname">vishelper.plot.</code><code class="descname">add_vline</code><span class="sig-paren">(</span><em>ax</em>, <em>x</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#add_vline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.add_vline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.adjust_lims">
+<code class="descclassname">vishelper.plot.</code><code class="descname">adjust_lims</code><span class="sig-paren">(</span><em>ax</em>, <em>xlim=None</em>, <em>ylim=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#adjust_lims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.adjust_lims" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.barh">
+<code class="descclassname">vishelper.plot.</code><code class="descname">barh</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>ax=None</em>, <em>color=None</em>, <em>label=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#barh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.barh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.boxplot">
+<code class="descclassname">vishelper.plot.</code><code class="descname">boxplot</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>ax=None</em>, <em>palette='Set3'</em>, <em>data=None</em>, <em>hue=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#boxplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.boxplot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.fake_legend">
+<code class="descclassname">vishelper.plot.</code><code class="descname">fake_legend</code><span class="sig-paren">(</span><em>ax</em>, <em>legend_labels</em>, <em>colors</em>, <em>marker=None</em>, <em>size=None</em>, <em>linestyle=''</em>, <em>loc='best'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#fake_legend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.fake_legend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.heatmap">
+<code class="descclassname">vishelper.plot.</code><code class="descname">heatmap</code><span class="sig-paren">(</span><em>df</em>, <em>ax=None</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>title=None</em>, <em>label_size=None</em>, <em>xticklabels=None</em>, <em>yticklabels=None</em>, <em>log10=False</em>, <em>xrotation=90</em>, <em>yrotation=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#heatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.heatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.hist">
+<code class="descclassname">vishelper.plot.</code><code class="descname">hist</code><span class="sig-paren">(</span><em>x</em>, <em>ax=None</em>, <em>color=None</em>, <em>logx=False</em>, <em>ignore_nan=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#hist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.hist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.labelfy">
+<code class="descclassname">vishelper.plot.</code><code class="descname">labelfy</code><span class="sig-paren">(</span><em>labels</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#labelfy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.labelfy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.line">
+<code class="descclassname">vishelper.plot.</code><code class="descname">line</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>ax=None</em>, <em>color=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.listify">
+<code class="descclassname">vishelper.plot.</code><code class="descname">listify</code><span class="sig-paren">(</span><em>l</em>, <em>multiplier=1</em>, <em>order=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#listify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.listify" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.plot">
+<code class="descclassname">vishelper.plot.</code><code class="descname">plot</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>kind=None</em>, <em>plot_function=None</em>, <em>ax=None</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>title=None</em>, <em>legend=None</em>, <em>legend_kwargs=None</em>, <em>ticks=None</em>, <em>labels=None</em>, <em>color=None</em>, <em>color_data=None</em>, <em>figsize=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.plot" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Data to be plotted in the x-axis or for univariate plots. If plotting a heatmap,
+x should be be a <code class="xref py py-class docutils literal notranslate"><span class="pre">pandas.DataFrame()</span></code></li>
+<li><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>, optional) – Default None (implies univariate plot).</li>
+<li><strong>kind</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – <p>Type of plot. Defaults to None, which implies <cite>plot_function</cite> should be given.
+Univariate continuous (y=None)
+* hist
+* barh</p>
+<p>Bivariate: continous x continuous
+* scatter
+* line</p>
+<p>Bivariate: categorical x continuous
+* boxplot</p>
+</li>
+<li><strong>plot_function</strong> – Default None. If “kind” is not given, can provide a plot function with the
+form plot_function(x, y, ax, <a href="#id17"><span class="problematic" id="id18">**</span></a>kwargs) or plot_function(x, ax, <a href="#id19"><span class="problematic" id="id20">**</span></a>kwargs)</li>
+<li><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes._subplots.AxesSubplot</span></code>, optional) – Matplotlib axes handle. Default is None
+and a new <cite>ax</cite> is generated along with the <cite>fig</cite>.</li>
+<li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – Label for x axis. Default None.</li>
+<li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – Label for y axis. Default None.</li>
+<li><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – Plot title. Default None.</li>
+<li><strong>legend</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a><em>, </em><em>optional</em>) – A legend will be displayed if legend=True or legend=None and more than one thing
+is being plot. Default None.</li>
+<li><strong>(</strong> (<em>legend_kwargs</em>) – obj`dict`, optional): Dictionary of keyword arguments for legend (see <cite>legend</cite> for more when
+legend will be displayed). Default None.</li>
+<li><strong>labels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – List of labels for legend. Default None. If legend is True,
+and no labels are provided, labels will be “Set N” where N is the ordering of the inputs.</li>
+<li><strong>ticks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – List of tick labels. Default None.</li>
+<li><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – Color to plot. List of colors if there is more than
+one thing being plot. Default is None, in which case, if color_data is also None, default colors
+from <cite>vishelper.formatting[“darks”]</cite> and then <cite>vishelper.formatting[“lights”]</cite> will be used.</li>
+<li><strong>color_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional) – If provided, list should be the same length of the data,
+providing an individual color for each data point. Default None in which case all points will be colored
+according to <cite>color</cite> argument.</li>
+<li><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><em>optional</em>) – Figure size. Default is None and plot will be sized based on
+<cite>vishelper.formatting[‘figure.figsize’]</cite>.</li>
+<li><strong>xlim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><em>optional</em>) – Tuple of minimum and maximum x values to plot (xmin, xmax). Default is None and
+matplotlib chooses these values.</li>
+<li><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><em>tuple</em></a><em>, </em><em>optional</em>) – Tuple of minimum and maximum y values to plot (ymin, ymax). Default is None and
+matplotlib chooses these values.</li>
+<li><strong>**kwargs</strong> – These kwargs are any that are relevant to the plot kind provided.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Matplotlib figure object
+ax (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes._subplots.AxesSubplot</span></code>): Axes object with the plot(s)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">fig (matplotlib.figure.Figure)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vishelper.plot.scatter">
+<code class="descclassname">vishelper.plot.</code><code class="descname">scatter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>ax=None</em>, <em>color=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/vishelper/plot.html#scatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vishelper.plot.scatter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-vishelper">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-vishelper" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Chloe Mawer
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -19,6 +19,7 @@ geoformatting = {"zoom_start": 4,
                  "fill_color": 'GnBu',
                  "fill_opacity":1,
                  "line_opacity": 2,
+                 "opacity":1,
                  "radius":15000,
                  "colors": vh.formatting["darks"],
                  "tiles":"OpenStreetMap"}
@@ -87,44 +88,48 @@ def slider_interact(plot_function, df, options, option_column, initial_option=No
                      );
 
 
-def color_continuous(df, color_col, clip=True, log10=False, cmap=None, **kwargs):
-    vmin = df[color_col].min() if "vmin" not in kwargs else kwargs["vmin"]
-    vmax = df[color_col].max() if "vmax" not in kwargs else kwargs["vmax"]
-    cmap = mpl.cm.OrRd if cmap is None else cmap
+def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_color="black", **kwargs):
+    getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
-    norm = mpl.colors.Normalize(vmin=vmin, vmax=vmax, clip=clip)
-    mapper = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
-    if log10:
-        df["color"] = df[color_col].apply(
-            lambda x: "#%02x%02x%02x" % tuple(int(255*n) for n in mapper.to_rgba(np.log10(x))[:-1]))
-    else:
-        df["color"] = df[color_col].apply(
-            lambda x: "#%02x%02x%02x" % tuple(int(255 * n) for n in mapper.to_rgba(x)[:-1]))
-    return df
+    if fmap is None:
+        fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
+
+    if len(np.shape(latlons)) == 1:
+        latlons = [latlons] * len(latlons)
+
+    assert np.shape(latlons)[1] == 2
+
+    color = vh.formatting["darks"][0] if color is None else color
+
+    if type(color) != list:
+        color = [color] * len(latlons)
+
+    assert len(color) == len(latlons)
+
+    for latlon, col in zip(latlons, color):
+
+        folium.Circle(location=latlon, radius=getfmt("radius"),
+                      fill=fill, color=col, fill_color=col).add_to(fmap)
+    if lines:
+        if type(line_color) != list:
+            line_color = [line_color] * (len(latlons) - 1)
+        assert len(latlon) > 1
+        assert len(line_color) == len(latlons) - 1
+        for latlonA, latlonB, lcolor in zip(latlons[:-1], latlons[:-1], line_color):
+            fmap = add_line(latlonA, latlonB, line_color=line_color, fmap=fmap)
+
+    return fmap
 
 
-def color_categorical(df, color_col, colors=None):
-    colors = vh.formatting["darks"] if colors is None else colors
-    categories = df.color_col.unique()
-    n = len(categories)
-    if len(colors) < n:
-        raise ValueError("There are %i unique values but only %i colors were given" % (n, len(colors)))
-    color_map = dict(zip(categories, colors[:n]))
-
-    df["color"] = df[color_col].apply(lambda x: color_map[x])
-
-    return df
-
-
-def add_lat_lng(df, lat_col="lat", lng_col="lng", color_col=None,
+def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None,
                 color_how=None, colors=None, fmap=None, fill=True, **kwargs):
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
     if color_col is not None:
         if color_how == "categorical":
-            df = color_categorical(df, color_col, colors)
+            df = vh.color_categorical(df, color_col, colors)
         elif color_how == "continuous":
-            df = color_continuous(df, color_col, **kwargs)
+            df = vh.color_continuous(df, color_col, **kwargs)
         else:
             raise ValueError("Must specify color_how as 'categorical' or 'continuous' or change color_col to None")
     else:
@@ -142,4 +147,15 @@ def add_lat_lng(df, lat_col="lat", lng_col="lng", color_col=None,
         color = color if color_col is None else df.loc[j, "color"]
         folium.Circle(location=[df.loc[j, lat_col], df.loc[j, lng_col]], radius=getfmt("radius"),
                       fill=fill, color=color, fill_color=color).add_to(fmap)
+    return fmap
+
+
+def add_line(latlonA, latlonB, line_color="black", fmap=None, **kwargs):
+    getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
+
+    if fmap is None:
+        fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
+
+    folium.PolyLine([[latlonA, latlonB]], color=line_color, opacity=getfmt("opacity")).add_to(fmap)
+
     return fmap
