@@ -311,11 +311,13 @@ def fake_legend(ax, legend_labels, colors, marker=None, size=None, linestyle="",
         ax.plot([], linestyle=linestyle, marker=marker, c=col, label=lab, markersize=size);
 
     lines, labels = ax.get_legend_handles_labels();
-    
+
+    for k in location:
+        kwargs[k] = location[k]
     ax.legend(lines[:len(legend_labels)],
               labels[:len(legend_labels)],
               fontsize=fontsize,
-              **location, **kwargs);
+              **kwargs);
 
     return ax
 
