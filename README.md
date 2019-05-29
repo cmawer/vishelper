@@ -3,10 +3,17 @@ Wrapper functions for easy, nicely formatted visuals for exploratory data analys
 
 
 ## Installation
+1. Clone this repository: 
 
-From the root of this repo: 
+```bash
+git clone git@github.com:cmawer/vishelper.git
+``` 
 
-`pip install .`
+2. Install the repository as a Python package. From the root of this repo: 
+
+```bash
+pip install .
+```
 
 ## Guide 
 See `vishelper-demo.ipynb` for step by step guide 
