@@ -4,7 +4,7 @@ from IPython.html.widgets import interactive
 from IPython.html import widgets
 from IPython.display import display
 import scipy.cluster.hierarchy as hac
-from pandas.tools.plotting import scatter_matrix
+from pandas.plotting import scatter_matrix
 from sklearn.decomposition import PCA, FactorAnalysis
 import seaborn as sns
 from matplotlib import pyplot as plt
