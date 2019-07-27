@@ -254,7 +254,7 @@ def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=F
                                 Defaults to `formatting['alpha.single']`
         logx (`bool`): If True, the x-axis will be transformed to log scale
         logy (`bool`): If True, the y-axis will be transformed to log scale
-        **kwargs:
+        **kwargs: Additional keyword arguments are passed to `ax.scatter()`
 
     Returns:
         ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle with scatter plot on it
