@@ -6,6 +6,8 @@ import os
 import logging
 import matplotlib as mpl
 import numpy as np
+from selenium import webdriver
+import time
 
 to_geo = lambda x: os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "geo/")), x)
 geos = dict(usstates=dict(path_to_geo=to_geo("us-states.json"), key_on='feature.properties.name'))
@@ -15,7 +17,7 @@ with open(to_geo("state-abbs.json"), 'r') as f:
     state_map = json.load(f)
 
 geoformatting = {"zoom_start": 4,
-                 "location_start": (38, -102),
+                 "location_start": [38, -96.5],
                  "fill_color": 'GnBu',
                  "fill_opacity":1,
                  "line_opacity": 2,
@@ -41,6 +43,7 @@ def basic_map(**kwargs):
 
 
 def plot_map(df, variable, geo_column, geo_type=None, path_to_geo=None, key_on=None, legend_name=None, reset=True, **kwargs):
+    getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
     if geo_type is not None:
         path_to_geo = geos[geo_type]["path_to_geo"]
         key_on = geos[geo_type]["key_on"]
@@ -121,14 +124,15 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
     return fmap
 
 
-def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None,
-                color_how=None, colors=None, fmap=None, fill=True, **kwargs):
+def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None, fill_opacity=1, radius=15000,
+                color_how=None, colors=None, fmap=None, fill=True, color_continuous_kwargs=None, **kwargs):
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
     if color_col is not None:
         if color_how == "categorical":
             df = vh.color_categorical(df, color_col, colors)
         elif color_how == "continuous":
+            color_continuous_kwargs = {} if color_continuous_kwargs is None else color_continuous_kwargs
             df = vh.color_continuous(df, color_col, **kwargs)
         else:
             raise ValueError("Must specify color_how as 'categorical' or 'continuous' or change color_col to None")
@@ -143,10 +147,11 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None,
     if fmap is None:
         fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
 
-    for j in df.index:
+    for i, j in enumerate(df.index):
+        r = radius if type(radius) != list and type(radius) != np.ndarray else radius[i]
         color = color if color_col is None else df.loc[j, "color"]
-        folium.Circle(location=[df.loc[j, lat_col], df.loc[j, lng_col]], radius=getfmt("radius"),
-                      fill=fill, color=color, fill_color=color).add_to(fmap)
+        folium.Circle(location=[df.loc[j, lat_col], df.loc[j, lng_col]], radius=r,
+                      fill=fill, color=color, fill_color=color, fill_opacity=fill_opacity, **kwargs).add_to(fmap)
     return fmap
 
 
@@ -156,6 +161,37 @@ def add_line(latlonA, latlonB, line_color="black", fmap=None, **kwargs):
     if fmap is None:
         fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
 
-    folium.PolyLine([[latlonA, latlonB]], color=line_color, opacity=getfmt("opacity")).add_to(fmap)
+    folium.PolyLine([[latlonA, latlonB]], color=line_color, **kwargs).add_to(fmap)
 
     return fmap
+
+
+def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625):
+    if htmlpath is None and pngpath is None:
+        raise ValueError("Must give at least htmlpath or pngpath")
+    elif htmlpath is None:
+        htmlpath = pngpath.split(".")[0] + ".html"
+    else:
+        pngpath = htmlpath.split(".")[0] + ".png"
+    tmpurl = 'file://{htmlpath}'.format(htmlpath=htmlpath)
+    browser = webdriver.Safari()
+    browser.set_window_size(width, width * ratio)
+
+    browser.get(tmpurl)
+    # Give the map tiles some time to load
+    time.sleep(delay)
+    browser.save_screenshot(pngpath)
+    browser.quit()
+
+
+def save_map(fmap, htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625):
+    if htmlpath is None and pngpath is None:
+        raise ValueError("Must give at least htmlpath or pngpath")
+    elif htmlpath is None:
+        htmlpath = pngpath.split(".")[0] + ".html"
+    else:
+        pngpath = htmlpath.split(".")[0] + ".png"
+
+    fmap.save(htmlpath)
+
+    html_to_png(htmlpath=htmlpath, pngpath=pngpath, delay=delay, width=width, ratio=ratio)
