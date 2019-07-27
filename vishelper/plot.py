@@ -117,12 +117,24 @@ def add_labels(ax, xlabel=None, ylabel=None, title=None, main_title=None):
 
 
 def adjust_lims(ax, xlim=None, ylim=None):
-    """Changes the `xlim` and `ylim` of `ax` if either are provided. """
+    """Adjusts the x-axis and y-axis view limits of `ax` if `xlim` and/or `ylim` are provided.
+
+    Args:
+        ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle
+        xlim (`tuple`, optional): Tuple of (`x_min`, `x_max`) giving the range of x-values to view in the plot.
+            If `xlim=None` (default), the x-axis view limits will not be changed.
+        ylim (`tuple`, optional): Tuple of (`y_min`, `y_max`) giving the range of y-values to view in the plot.
+            If `ylim=None` (default), the x-axis view limits will not be changed.
+
+    Returns:
+        ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle with adjusted xlim and ylim
+    """
     if xlim is not None:
         ax.set_xlim(xlim)
     if ylim is not None:
         ax.set_ylim(ylim)
     return ax
+
 
 def add_hline(ax, y, **kwargs):
     """Adds a horizontal line to the axis `ax` at the provided `y` value."""
@@ -170,85 +182,102 @@ def column_to_colors(df, column, colors=None):
     return colors, color_map
 
 
-def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
-    """Plots a histogram based on `x` """
-    if ignore_nan:
-        if "stacked" not in kwargs or not kwargs["stacked"]:
-            original_len = len(x)
-            x = [xi for xi in x if not np.isnan(xi)]
-            final_len = len(x)
-            if final_len != original_len:
-                diff = original_len-final_len
-                logging.warning("A total of %i NaN values out of %i observations were removed" % (diff, original_len))
-        else:
-            x_to_process = x
-            x = []
-            for j, subx in enumerate(x_to_process):
-                original_len = len(subx)
-                subx = [xi for xi in subx if not np.isnan(xi)]
-                x.append(subx)
-                final_len = len(subx)
-                if final_len != original_len:
-                    diff = original_len - final_len
-                    logging.warning("A total of %i NaN values out of %i observations were removed from set %i" % (diff, original_len, j))
+def fake_legend(ax, legend_labels, colors, marker=None, size=None, fontsize=None, linestyle="",
+                loc=None, bbox_to_anchor=None, where="best", **kwargs):
+    """Adds a fake legend to the plot with the provided legend labels and corresponding colors and attributes.
+
+    Args:
+        ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle
+        legend_labels (`list` of `str`): Labels for the legend items.
+        colors (`list`): List of colors of the items in the legend.
+        marker (`str` or `list` of `str`, optional): Marker for the items in the legend. Defaults
+                                                     to `formatting['legend.marker']`
+        size (`str` or `list` of `str`, optional): Marker size for the items in the legend. Defaults
+                                                     to `formatting['markersize']`
+        where (`str`, optional): Where to put the legend. Options are `right`, `below`, and `best`
+        linestyle (`str` or `list` of `str`, optional): Line style for items in legend. Defaults to `""` (no line).
+        loc ('str`, optional): Location for where to place the legend. Defaults to "best".
+        bbox_to_anchor (`tuple`): Where to anchor legend, used to place legend outside plot. Default None.
+        **kwargs: Keyword arguments passed to `ax.legend()`
+
+    Returns:
+        ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle with fake legend
+    """
+
+    locations = dict(right=dict(loc='center left', bbox_to_anchor=(1, 0.5)),
+                     below=dict(loc='upper center', bbox_to_anchor=(0.5, -0.1)),
+                     best=dict(loc="best"))
+
+    if loc is None and bbox_to_anchor is None:
+        location = locations[where]
+    else:
+        location = {}
+        if loc is not None:
+            location["loc"] =loc
+        if bbox_to_anchor is not None:
+            location["bbox_to_anchor"] = bbox_to_anchor
+
+    marker = formatting['legend.marker'] if marker is None else marker
+    size = formatting['markersize'] if size is None else size
+
+    fontsize = formatting['legend.fontsize'] if fontsize is None else fontsize
+
+    for col, lab in zip(colors, legend_labels):
+        ax.plot([], linestyle=linestyle, marker=marker, c=col, label=lab, markersize=size);
+
+    lines, labels = ax.get_legend_handles_labels();
+
+    for k in location:
+        kwargs[k] = location[k]
+
+    ax.legend(lines[:len(legend_labels)],
+              labels[:len(legend_labels)],
+              fontsize=fontsize,
+              **kwargs);
+
+    return ax
+
+
+def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, **kwargs):
+    """Creates a scatter plot of (x, y)
+
+    Args:
+        x (`list` or :class:`numpy.ndarray`): x-coordinates for plotting. Must be same size as `y`
+        y (`list` or :class:`numpy.ndarray`): y-coordinates for plotting. Must be same size as `x`
+        ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle
+        color: The marker color. Can be a olor, sequence, or sequence of color, optional. Defaults to the first value
+               in `formatting["darks"]. Possible values:
+                    A single color format string.
+                    A sequence of color specifications of length n.
+                    A sequence of n numbers to be mapped to colors using cmap and norm.
+        alpha (`float`, optional): The alpha blending value, between 0 (transparent) and 1 (opaque).
+                                Defaults to `formatting['alpha.single']`
+        logx (`bool`): If True, the x-axis will be transformed to log scale
+        logy (`bool`): If True, the y-axis will be transformed to log scale
+        **kwargs:
+
+    Returns:
+        ax (:class:`matplotlib.axes._subplots.AxesSubplot`): Matplotlib axes handle with scatter plot on it
+
+    """
     if not ax:
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
     else:
         fig = None
+
+    if color is None:
+        color = formatting['darks'][0]
+    if size is None:
+        size = formatting['markersize']
+
+    if alpha is None:
+        alpha = formatting['alpha.single']
 
     if logx:
-        if 'bins' in kwargs.keys() and isinstance(kwargs['bins'], int):
-            kwargs['bins'] = np.logspace(np.log10(np.min(x)),
-                                         np.log10(np.max(x)), kwargs['bins'])
-        ax.set_xscale("log")
+        ax.set_xscale("log");
 
-    if 'alpha' not in kwargs.keys():
-        alpha = formatting['alpha.single']
-    else:
-        alpha = kwargs.pop('alpha')
-
-    if color is None:
-        color = formatting['darks'][0]
-    if "stacked" in kwargs and kwargs["stacked"]:
-        if len(color)!=len(x):
-            color = formatting['darks'][:len(x)]
-        # if "stackedlabels" in kwargs:
-        #     kwargs["label"] = kwargs.pop("stackedlabels")
-
-    ax.hist(x, color=color, alpha=alpha, **kwargs)
-
-    if fig is None:
-        return ax
-    else:
-        return fig, ax
-
-
-def scatter(x, y, ax=None, color=None, **kwargs):
-    if not ax:
-        fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
-    else:
-        fig = None
-
-    if color is None:
-        color = formatting['darks'][0]
-    if 'size' not in kwargs.keys():
-        size = formatting['markersize']
-    else:
-        size = kwargs.pop('size')
-    if 'alpha' not in kwargs.keys():
-        alpha = formatting['alpha.single']
-    else:
-        alpha = kwargs.pop('alpha')
-
-    if "logx" in kwargs:
-        logx = kwargs.pop("logx")
-        if logx:
-            ax.set_xscale("log");
-
-    if "logy" in kwargs:
-        logy = kwargs.pop("logy")
-        if logy:
-            ax.set_yscale("log");
+    if logy:
+        ax.set_yscale("log");
 
     ax.scatter(x, y, color=color, s=size, alpha=alpha, **kwargs)
 
@@ -325,39 +354,57 @@ def barh(x, y, ax=None, color=None, label=None, **kwargs):
     return fig, ax
 
 
-def fake_legend(ax, legend_labels, colors, marker=None, size=None, linestyle="", where="best", **kwargs):
-
-    locations = dict(right=dict(loc='center left', bbox_to_anchor=(1, 0.5)),
-                     below=dict(loc='upper center', bbox_to_anchor=(0.5, -0.1)),
-                     best=dict(loc="best"))
-
-    if "loc" not in kwargs and "bbox_to_anchor" not in kwargs:
-        location = locations[where]
+def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
+    """Plots a histogram based on values of `x`"""
+    if ignore_nan:
+        if "stacked" not in kwargs or not kwargs["stacked"]:
+            original_len = len(x)
+            x = [xi for xi in x if not np.isnan(xi)]
+            final_len = len(x)
+            if final_len != original_len:
+                diff = original_len-final_len
+                logging.warning("A total of %i NaN values out of %i observations were removed" % (diff, original_len))
+        else:
+            x_to_process = x
+            x = []
+            for j, subx in enumerate(x_to_process):
+                original_len = len(subx)
+                subx = [xi for xi in subx if not np.isnan(xi)]
+                x.append(subx)
+                final_len = len(subx)
+                if final_len != original_len:
+                    diff = original_len - final_len
+                    logging.warning("A total of %i NaN values out of %i observations were removed from set %i" % (diff, original_len, j))
+    if not ax:
+        fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
     else:
-        location = {}
-        if "loc" in kwargs:
-            location["loc"] = kwargs.pop("loc")
-        if "bbox_to_anchor" in kwargs:
-            location["bbox_to_anchor"] = kwargs.pop("bbox_to_anchor")
+        fig = None
 
-    marker = formatting['legend.marker'] if marker is None else marker
-    size = formatting['markersize'] if size is None else size
+    if logx:
+        if 'bins' in kwargs.keys() and isinstance(kwargs['bins'], int):
+            kwargs['bins'] = np.logspace(np.log10(np.min(x)),
+                                         np.log10(np.max(x)), kwargs['bins'])
+        ax.set_xscale("log")
 
-    fontsize = formatting['legend.fontsize'] if "fontsize" not in kwargs else kwargs.pop("fontsize")
+    if 'alpha' not in kwargs.keys():
+        alpha = formatting['alpha.single']
+    else:
+        alpha = kwargs.pop('alpha')
 
-    for col, lab in zip(colors, legend_labels):
-        ax.plot([], linestyle=linestyle, marker=marker, c=col, label=lab, markersize=size);
+    if color is None:
+        color = formatting['darks'][0]
+    if "stacked" in kwargs and kwargs["stacked"]:
+        if len(color)!=len(x):
+            color = formatting['darks'][:len(x)]
+        # if "stackedlabels" in kwargs:
+        #     kwargs["label"] = kwargs.pop("stackedlabels")
 
-    lines, labels = ax.get_legend_handles_labels();
+    ax.hist(x, color=color, alpha=alpha, **kwargs)
 
-    for k in location:
-        kwargs[k] = location[k]
-    ax.legend(lines[:len(legend_labels)],
-              labels[:len(legend_labels)],
-              fontsize=fontsize,
-              **kwargs);
-
-    return ax
+    if fig is None:
+        return ax
+    else:
+        return fig, ax
 
 
 def heatmap(df, ax=None,
