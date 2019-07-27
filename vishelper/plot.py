@@ -42,6 +42,7 @@ map_to_days = dict(zip(range(7), days_of_week))
 
 def color_continuous(df, column_to_color, new_color_column="color", clip=True, log10=False,
                      cmap=None, return_all=False, **kwargs):
+    """Adds a column to a dataframe with colors assigned according to the continuous value in the `column_to_color`"""
     vmin = df[column_to_color].min() if "vmin" not in kwargs else kwargs["vmin"]
     vmax = df[column_to_color].max() if "vmax" not in kwargs else kwargs["vmax"]
     cmap = mpl.cm.OrRd if cmap is None else cmap
@@ -63,7 +64,8 @@ def color_continuous(df, column_to_color, new_color_column="color", clip=True, l
 
 
 def color_categorical(df, column_to_color, new_color_column="color", colors=None):
-    colors = vh.formatting["darks"] if colors is None else colors
+    """Adds a column to a dataframe with colors assigned according to the category in the `column_to_color`"""
+    colors = formatting["darks"] if colors is None else colors
     categories = df.column_to_color.unique()
     n = len(categories)
     if len(colors) < n:
@@ -76,6 +78,7 @@ def color_categorical(df, column_to_color, new_color_column="color", colors=None
 
 
 def create_colorbar(ax, cmap, norm, where="right", size='5%', pad=0.25, label=None):
+    """Adds a color bar as defined by the provided `cmap` and `norm` """
     divider = make_axes_locatable(ax)
     cax = divider.append_axes(where, size=size, pad=pad)
     cbar = mpl.colorbar.ColorbarBase(cax, cmap=cmap,
@@ -86,6 +89,7 @@ def create_colorbar(ax, cmap, norm, where="right", size='5%', pad=0.25, label=No
 
 
 def listify(l, multiplier=1, order=1):
+    """Embeds a list in a list or replicates a list to meet shape requirements."""
     l = l if (isinstance(l, list) or isinstance(l, np.ndarray)) else [
                                                                          l] * multiplier
 
@@ -96,6 +100,7 @@ def listify(l, multiplier=1, order=1):
 
 
 def add_labels(ax, xlabel=None, ylabel=None, title=None, main_title=None):
+    """Adds `xlabel`, `ylabel`, `title`, `main_title`, if provided to `ax` with size given by the `formatting` dict. """
     if xlabel:
         ax.set_xlabel(xlabel, size=formatting['axes.labelsize']);
     if ylabel:
@@ -107,20 +112,66 @@ def add_labels(ax, xlabel=None, ylabel=None, title=None, main_title=None):
         plt.suptitle(main_title, x=formatting['suptitle.x'],
                      y=formatting['suptitle.y'],
                      size=formatting['suptitle.size'])
-    # self.logger.info("Hello " + self.name)
+
     return ax
 
 
 def adjust_lims(ax, xlim=None, ylim=None):
+    """Changes the `xlim` and `ylim` of `ax` if either are provided. """
     if xlim is not None:
         ax.set_xlim(xlim)
     if ylim is not None:
         ax.set_ylim(ylim)
     return ax
 
+def add_hline(ax, y, **kwargs):
+    """Adds a horizontal line to the axis `ax` at the provided `y` value."""
+    xmin = ax.get_xlim()[0]
+    xmax = ax.get_xlim()[1]
+    ax.hlines(y, xmin, xmax, **kwargs)
+    return ax
+
+
+def add_vline(ax, x, **kwargs):
+    """Adds a vertical line to the axis `ax` at the provided `x` value."""
+    ymin = ax.get_ylim()[0]
+    ymax = ax.get_ylim()[1]
+    ax.vlines(x, ymin, ymax, **kwargs)
+    return ax
+
+
+def add_dline(ax, **kwargs):
+    """Adds a diagonal line with unit slope from `(x_min, x_min)` to `(x_max, x_max)`"""
+    xmax = ax.get_xlim()[1]
+    xmin = ax.get_xlim()[0]
+    ax = ax.plot([xmin, xmax], [xmin, xmax], **kwargs)
+    return ax
+
+
+def labelfy(labels):
+    """Takes a list of column names, replaces underscores with spaces, and capitalizes to be used for plot labels."""
+    if isinstance(labels, str):
+        labels = ' '.join(labels.split('_')).capitalize()
+    elif isinstance(labels[0], str):
+        labels = [' '.join(lab.split('_')).capitalize() for lab in labels]
+
+    return labels
+
+
+def column_to_colors(df, column, colors=None):
+    """Takes a column of categorical values and assigns a color to each category."""
+
+    if colors is None:
+        colors = formatting["darks"] + formatting["mediums"]
+    cats = df[column].unique()
+
+    color_map = dict(zip(cats, colors[:len(cats)]))
+    colors = df[column].map(color_map)
+    return colors, color_map
+
 
 def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
-
+    """Plots a histogram based on `x` """
     if ignore_nan:
         if "stacked" not in kwargs or not kwargs["stacked"]:
             original_len = len(x)
@@ -166,10 +217,6 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
 
     ax.hist(x, color=color, alpha=alpha, **kwargs)
 
-    # if "label" in kwargs:
-    #     ax.legend(loc=formatting['legend.location'],
-    #               fontsize=formatting['legend.fontsize'])
-
     if fig is None:
         return ax
     else:
@@ -204,15 +251,6 @@ def scatter(x, y, ax=None, color=None, **kwargs):
             ax.set_yscale("log");
 
     ax.scatter(x, y, color=color, s=size, alpha=alpha, **kwargs)
-
-    #
-    #     if logx:
-    #         ax = ax.set_xscale("log")
-    #
-    # if "logy" in kwargs:
-    #     logy = kwargs.pop("logy")
-    #     if logy:
-    #         ax = ax.set_yscale("log")
 
     if fig is None:
         return ax
@@ -365,10 +403,13 @@ def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, col
     else:
         fig = None
 
+    if "label" in kwargs:
+        kwargs.pop("label")
+
     if data is not None and type(x)==list:
         x = x[0]
         y = y[0]
-    ax = sns.boxplot(x=x, y=y, data=data, palette=palette, hue=hue, ax=ax)
+    ax = sns.boxplot(x=x, y=y, data=data, palette=palette, hue=hue, ax=ax, **kwargs)
 
     if white or color_map is not None:
         for i, box in enumerate(ax.artists):
@@ -504,47 +545,5 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
         return ax
     else:
         return fig, ax
-
-
-def add_hline(ax, y, **kwargs):
-    xmin = ax.get_xlim()[0]
-    xmax = ax.get_xlim()[1]
-    ax.hlines(y, xmin, xmax, **kwargs)
-    return ax
-
-
-def add_vline(ax, x, **kwargs):
-    ymin = ax.get_ylim()[0]
-    ymax = ax.get_ylim()[1]
-    ax.vlines(x, ymin, ymax, **kwargs)
-    return ax
-
-
-def add_dline(ax, **kwargs):
-
-    xmax = ax.get_xlim()[1]
-    xmin = ax.get_xlim()[0]
-    ax = ax.plot([xmin, xmax], [xmin, xmax], **kwargs)
-    return ax
-
-
-def labelfy(labels):
-    if isinstance(labels, str):
-        labels = ' '.join(labels.split('_')).capitalize()
-    elif isinstance(labels[0], str):
-        labels = [' '.join(lab.split('_')).capitalize() for lab in labels]
-
-    return labels
-
-
-def column_to_colors(df, column, colors=None):
-
-    if colors is None:
-        colors = formatting["darks"] + formatting["mediums"]
-    cats = df[column].unique()
-
-    color_map = dict(zip(cats, colors[:len(cats)]))
-    colors = df[column].map(color_map)
-    return colors, color_map
 
 
