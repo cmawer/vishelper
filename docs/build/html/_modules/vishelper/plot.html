@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -149,6 +151,7 @@
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="k">import</span> <span class="n">LogNorm</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="k">import</span> <span class="n">make_axes_locatable</span>
 <span class="n">formatting</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
               <span class="s1">&#39;tick.labelsize&#39;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span>
               <span class="s1">&#39;tick.size&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
@@ -183,7 +186,56 @@
 <span class="n">map_to_days</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span> <span class="n">days_of_week</span><span class="p">))</span>
 
 
+<div class="viewcode-block" id="color_continuous"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.color_continuous">[docs]</a><span class="k">def</span> <span class="nf">color_continuous</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column_to_color</span><span class="p">,</span> <span class="n">new_color_column</span><span class="o">=</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">log10</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                     <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_all</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a column to a dataframe with colors assigned according to the continuous value in the `column_to_color`&quot;&quot;&quot;</span>
+    <span class="n">vmin</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_to_color</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;vmin&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vmin&quot;</span><span class="p">]</span>
+    <span class="n">vmax</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_to_color</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;vmax&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vmax&quot;</span><span class="p">]</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">OrRd</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cmap</span>
+
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="n">clip</span><span class="p">)</span>
+    <span class="n">mapper</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">log10</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">new_color_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_to_color</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;#</span><span class="si">%02x%02x%02x</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">255</span><span class="o">*</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">df</span><span class="p">[</span><span class="n">new_color_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_to_color</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;#</span><span class="si">%02x%02x%02x</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">return_all</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="color_categorical"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.color_categorical">[docs]</a><span class="k">def</span> <span class="nf">color_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column_to_color</span><span class="p">,</span> <span class="n">new_color_column</span><span class="o">=</span><span class="s2">&quot;color&quot;</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a column to a dataframe with colors assigned according to the category in the `column_to_color`&quot;&quot;&quot;</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;darks&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">colors</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">column_to_color</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">%i</span><span class="s2"> unique values but only </span><span class="si">%i</span><span class="s2"> colors were given&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)))</span>
+    <span class="n">color_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">colors</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span>
+
+    <span class="n">df</span><span class="p">[</span><span class="n">new_color_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column_to_color</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">color_map</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="create_colorbar"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.create_colorbar">[docs]</a><span class="k">def</span> <span class="nf">create_colorbar</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="s1">&#39;5%&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a color bar as defined by the provided `cmap` and `norm` &quot;&quot;&quot;</span>
+    <span class="n">divider</span> <span class="o">=</span> <span class="n">make_axes_locatable</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">cax</span> <span class="o">=</span> <span class="n">divider</span><span class="o">.</span><span class="n">append_axes</span><span class="p">(</span><span class="n">where</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="n">pad</span><span class="p">)</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colorbar</span><span class="o">.</span><span class="n">ColorbarBase</span><span class="p">(</span><span class="n">cax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+                                     <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
 <div class="viewcode-block" id="listify"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.listify">[docs]</a><span class="k">def</span> <span class="nf">listify</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">multiplier</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Embeds a list in a list or replicates a list to meet shape requirements.&quot;&quot;&quot;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="n">l</span> <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span>
                                                                          <span class="n">l</span><span class="p">]</span> <span class="o">*</span> <span class="n">multiplier</span>
 
@@ -194,6 +246,7 @@
 
 
 <div class="viewcode-block" id="add_labels"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_labels">[docs]</a><span class="k">def</span> <span class="nf">add_labels</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">main_title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds `xlabel`, `ylabel`, `title`, `main_title`, if provided to `ax` with size given by the `formatting` dict. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">xlabel</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;axes.labelsize&#39;</span><span class="p">]);</span>
     <span class="k">if</span> <span class="n">ylabel</span><span class="p">:</span>
@@ -205,20 +258,66 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="n">main_title</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;suptitle.x&#39;</span><span class="p">],</span>
                      <span class="n">y</span><span class="o">=</span><span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;suptitle.y&#39;</span><span class="p">],</span>
                      <span class="n">size</span><span class="o">=</span><span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;suptitle.size&#39;</span><span class="p">])</span>
-    <span class="c1"># self.logger.info(&quot;Hello &quot; + self.name)</span>
+
     <span class="k">return</span> <span class="n">ax</span></div>
 
 
 <div class="viewcode-block" id="adjust_lims"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.adjust_lims">[docs]</a><span class="k">def</span> <span class="nf">adjust_lims</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Changes the `xlim` and `ylim` of `ax` if either are provided. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ax</span></div>
 
+<div class="viewcode-block" id="add_hline"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_hline">[docs]</a><span class="k">def</span> <span class="nf">add_hline</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a horizontal line to the axis `ax` at the provided `y` value.&quot;&quot;&quot;</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="add_vline"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_vline">[docs]</a><span class="k">def</span> <span class="nf">add_vline</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a vertical line to the axis `ax` at the provided `x` value.&quot;&quot;&quot;</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ymax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="add_dline"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_dline">[docs]</a><span class="k">def</span> <span class="nf">add_dline</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a diagonal line with unit slope from `(x_min, x_min)` to `(x_max, x_max)`&quot;&quot;&quot;</span>
+    <span class="n">xmax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">xmin</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+
+<div class="viewcode-block" id="labelfy"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.labelfy">[docs]</a><span class="k">def</span> <span class="nf">labelfy</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a list of column names, replaces underscores with spaces, and capitalizes to be used for plot labels.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lab</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">labels</span></div>
+
+
+<div class="viewcode-block" id="column_to_colors"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.column_to_colors">[docs]</a><span class="k">def</span> <span class="nf">column_to_colors</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes a column of categorical values and assigns a color to each category.&quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">colors</span> <span class="o">=</span> <span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;darks&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;mediums&quot;</span><span class="p">]</span>
+    <span class="n">cats</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+    <span class="n">color_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cats</span><span class="p">,</span> <span class="n">colors</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">cats</span><span class="p">)]))</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">color_map</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">colors</span><span class="p">,</span> <span class="n">color_map</span></div>
+
 
 <div class="viewcode-block" id="hist"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.hist">[docs]</a><span class="k">def</span> <span class="nf">hist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logx</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore_nan</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
+    <span class="sd">&quot;&quot;&quot;Plots a histogram based on `x` &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">ignore_nan</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;stacked&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;stacked&quot;</span><span class="p">]:</span>
             <span class="n">original_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -264,10 +363,6 @@
 
     <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="c1"># if &quot;label&quot; in kwargs:</span>
-    <span class="c1">#     ax.legend(loc=formatting[&#39;legend.location&#39;],</span>
-    <span class="c1">#               fontsize=formatting[&#39;legend.fontsize&#39;])</span>
-
     <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ax</span>
     <span class="k">else</span><span class="p">:</span>
@@ -302,15 +397,6 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">);</span>
 
     <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="c1">#</span>
-    <span class="c1">#     if logx:</span>
-    <span class="c1">#         ax = ax.set_xscale(&quot;log&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1"># if &quot;logy&quot; in kwargs:</span>
-    <span class="c1">#     logy = kwargs.pop(&quot;logy&quot;)</span>
-    <span class="c1">#     if logy:</span>
-    <span class="c1">#         ax = ax.set_yscale(&quot;log&quot;)</span>
 
     <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ax</span>
@@ -385,18 +471,37 @@
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
 
-<div class="viewcode-block" id="fake_legend"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.fake_legend">[docs]</a><span class="k">def</span> <span class="nf">fake_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend_labels</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="fake_legend"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.fake_legend">[docs]</a><span class="k">def</span> <span class="nf">fake_legend</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">legend_labels</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="n">locations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+                     <span class="n">below</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper center&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">)),</span>
+                     <span class="n">best</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;loc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;bbox_to_anchor&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="n">locations</span><span class="p">[</span><span class="n">where</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">location</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s2">&quot;loc&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">location</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;loc&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;bbox_to_anchor&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">location</span><span class="p">[</span><span class="s2">&quot;bbox_to_anchor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;bbox_to_anchor&quot;</span><span class="p">)</span>
+
     <span class="n">marker</span> <span class="o">=</span> <span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;legend.marker&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">marker</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">marker</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;markersize&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">size</span>
+
+    <span class="n">fontsize</span> <span class="o">=</span> <span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;legend.fontsize&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;fontsize&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fontsize&quot;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">lab</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">legend_labels</span><span class="p">):</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([],</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">lab</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="n">size</span><span class="p">);</span>
 
     <span class="n">lines</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">();</span>
-    
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">location</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">location</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">lines</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">legend_labels</span><span class="p">)],</span>
               <span class="n">labels</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">legend_labels</span><span class="p">)],</span>
-              <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">);</span>
+              <span class="n">fontsize</span><span class="o">=</span><span class="n">fontsize</span><span class="p">,</span>
+              <span class="o">**</span><span class="n">kwargs</span><span class="p">);</span>
 
     <span class="k">return</span> <span class="n">ax</span></div>
 
@@ -438,17 +543,34 @@
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
 
-<div class="viewcode-block" id="boxplot"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.boxplot">[docs]</a><span class="k">def</span> <span class="nf">boxplot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;Set3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="boxplot"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.boxplot">[docs]</a><span class="k">def</span> <span class="nf">boxplot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;Set3&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">white</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xrotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">formatting</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span>
 
+    <span class="k">if</span> <span class="s2">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">==</span><span class="nb">list</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="n">hue</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="n">palette</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="n">hue</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">white</span> <span class="ow">or</span> <span class="n">color_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">box</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">artists</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">color_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">()[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="n">color_map</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;white&quot;</span>
+            <span class="n">box</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+            <span class="n">box</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+
+            <span class="c1"># iterate over whiskers and median lines</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span><span class="o">=</span><span class="n">xrotation</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ax</span>
     <span class="k">else</span><span class="p">:</span>
@@ -571,35 +693,6 @@
         <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
 
-<div class="viewcode-block" id="add_hline"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_hline">[docs]</a><span class="k">def</span> <span class="nf">add_hline</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">xmin</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">xmax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ax</span></div>
-
-
-<div class="viewcode-block" id="add_vline"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_vline">[docs]</a><span class="k">def</span> <span class="nf">add_vline</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">ymin</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">ymax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ax</span></div>
-
-
-<div class="viewcode-block" id="add_dline"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.add_dline">[docs]</a><span class="k">def</span> <span class="nf">add_dline</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-
-    <span class="n">xmax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">xmin</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ax</span></div>
-
-
-<div class="viewcode-block" id="labelfy"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.plot.labelfy">[docs]</a><span class="k">def</span> <span class="nf">labelfy</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lab</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">lab</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">labels</span></div>
 </pre></div>
 
            </div>
@@ -629,26 +722,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

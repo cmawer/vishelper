@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -331,6 +333,24 @@
 <span class="sd">        Args:</span>
 <span class="sd">            columns_to_plot (:obj:`list` of [:obj:`str` or :obj:`lists`): The</span>
 <span class="sd">                column(s) to plot in each figure.</span>
+
+<span class="sd">                *Univariate only*: If only plotting univariate plots,</span>
+<span class="sd">                    `columns_to_plot` will look like</span>
+<span class="sd">                    [&#39;column1&#39;,&#39;column2&#39;,..., &#39;columnN&#39;]  where &#39;column1&#39; will</span>
+<span class="sd">                    be plot in figure 1, &#39;column2&#39; in figure 2, etc.</span>
+
+<span class="sd">                **Bivariate only*: If only plotting bivariate plots,</span>
+<span class="sd">                    `columns_to_plot` will look like</span>
+<span class="sd">                    [[&#39;columnx1&#39;, &#39;columny1&#39;],[&#39;columnx2&#39;, &#39;columny2], ..., ]</span>
+<span class="sd">                    where &#39;columnx1&#39; will be plotted vs &#39;columny1&#39; in figure 1.</span>
+
+<span class="sd">                *Mix of univariate and bivariate*: If plotting a mix of plot</span>
+<span class="sd">                    types, `columns_to_plot` will look something like:</span>
+<span class="sd">                    [&#39;column1&#39;, [&#39;columnx2&#39;, &#39;columny2&#39;], &#39;column3&#39;,...]. Note</span>
+<span class="sd">                    that  this will require a mix of plot types and currently</span>
+<span class="sd">                    **kwargs cannot be provided that don&#39;t work in all</span>
+<span class="sd">                    plot functions.</span>
+
 <span class="sd">            kind (:obj:`str` or :obj:`list` of :obj:`str`): What type of plot</span>
 <span class="sd">                to plot. If a string, the plot type is used for each subplot.</span>
 <span class="sd">                If a list, it should be the same length as</span>
@@ -340,6 +360,8 @@
 <span class="sd">                given, the layout will default to N x 2 where N is calculated</span>
 <span class="sd">                based on length of `columns_to_plot`</span>
 <span class="sd">            main_title (:obj:`str`, optional): Optional, title for the entire figure.</span>
+<span class="sd">            titles (:obj:`list` of :obj:`str, optional): List of titles for each subplot</span>
+<span class="sd">                corresponding to the order of `columns_to_plot`</span>
 <span class="sd">            counts (:bool:): If True, plot :py:meth:`pd.DataFrame.value_counts()`</span>
 <span class="sd">                is plotted rather than the data frame data. This is typically</span>
 <span class="sd">                used for categorical fields.</span>
@@ -360,22 +382,7 @@
 <span class="sd">                TO DO: something to allow for keyword arguments to only be fed</span>
 <span class="sd">                functions that they apply to</span>
 
-<span class="sd">                *Univariate only*: If only plotting univariate plots,</span>
-<span class="sd">                    `columns_to_plot` will look like</span>
-<span class="sd">                    [&#39;column1&#39;,&#39;column2&#39;,..., &#39;columnN&#39;]  where &#39;column1&#39; will</span>
-<span class="sd">                    be plot in figure 1, &#39;column2&#39; in figure 2, etc.</span>
 
-<span class="sd">                **Bivariate only*: If only plotting bivariate plots,</span>
-<span class="sd">                    `columns_to_plot` will look like</span>
-<span class="sd">                    [[&#39;columnx1&#39;, &#39;columny1&#39;],[&#39;columnx2&#39;, &#39;columny2], ..., ]</span>
-<span class="sd">                    where &#39;columnx1&#39; will be plotted vs &#39;columny1&#39; in figure 1.</span>
-
-<span class="sd">                *Mix of univariate and bivariate*: If plotting a mix of plot</span>
-<span class="sd">                    types, `columns_to_plot` will look something like:</span>
-<span class="sd">                    [&#39;column1&#39;, [&#39;columnx2&#39;, &#39;columny2&#39;], &#39;column3&#39;,...]. Note</span>
-<span class="sd">                    that  this will require a mix of plot types and currently</span>
-<span class="sd">                    **kwargs cannot be provided that don&#39;t work in all</span>
-<span class="sd">                    plot functions.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            fig: :python:obj:matplotlib.figure.Figure`</span>
@@ -747,26 +754,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

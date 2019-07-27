@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -150,6 +152,8 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="k">import</span> <span class="n">webdriver</span>
+<span class="kn">import</span> <span class="nn">time</span>
 
 <span class="n">to_geo</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;geo/&quot;</span><span class="p">)),</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">geos</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">usstates</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">path_to_geo</span><span class="o">=</span><span class="n">to_geo</span><span class="p">(</span><span class="s2">&quot;us-states.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.name&#39;</span><span class="p">))</span>
@@ -159,10 +163,11 @@
     <span class="n">state_map</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
 <span class="n">geoformatting</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-                 <span class="s2">&quot;location_start&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="o">-</span><span class="mi">102</span><span class="p">),</span>
+                 <span class="s2">&quot;location_start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">38</span><span class="p">,</span> <span class="o">-</span><span class="mf">96.5</span><span class="p">],</span>
                  <span class="s2">&quot;fill_color&quot;</span><span class="p">:</span> <span class="s1">&#39;GnBu&#39;</span><span class="p">,</span>
                  <span class="s2">&quot;fill_opacity&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
                  <span class="s2">&quot;line_opacity&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                 <span class="s2">&quot;opacity&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
                  <span class="s2">&quot;radius&quot;</span><span class="p">:</span><span class="mi">15000</span><span class="p">,</span>
                  <span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="n">vh</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;darks&quot;</span><span class="p">],</span>
                  <span class="s2">&quot;tiles&quot;</span><span class="p">:</span><span class="s2">&quot;OpenStreetMap&quot;</span><span class="p">}</span>
@@ -184,6 +189,7 @@
 
 
 <div class="viewcode-block" id="plot_map"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.plot_map">[docs]</a><span class="k">def</span> <span class="nf">plot_map</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">variable</span><span class="p">,</span> <span class="n">geo_column</span><span class="p">,</span> <span class="n">geo_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path_to_geo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key_on</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">legend_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">geo_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path_to_geo</span> <span class="o">=</span> <span class="n">geos</span><span class="p">[</span><span class="n">geo_type</span><span class="p">][</span><span class="s2">&quot;path_to_geo&quot;</span><span class="p">]</span>
         <span class="n">key_on</span> <span class="o">=</span> <span class="n">geos</span><span class="p">[</span><span class="n">geo_type</span><span class="p">][</span><span class="s2">&quot;key_on&quot;</span><span class="p">]</span>
@@ -231,44 +237,49 @@
                      <span class="p">);</span></div>
 
 
-<div class="viewcode-block" id="color_continuous"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.color_continuous">[docs]</a><span class="k">def</span> <span class="nf">color_continuous</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">log10</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">vmin</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;vmin&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vmin&quot;</span><span class="p">]</span>
-    <span class="n">vmax</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="s2">&quot;vmax&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vmax&quot;</span><span class="p">]</span>
-    <span class="n">cmap</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">OrRd</span> <span class="k">if</span> <span class="n">cmap</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">cmap</span>
+<div class="viewcode-block" id="add_latlons"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.add_latlons">[docs]</a><span class="k">def</span> <span class="nf">add_latlons</span><span class="p">(</span><span class="n">latlons</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
 
-    <span class="n">norm</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span> <span class="n">clip</span><span class="o">=</span><span class="n">clip</span><span class="p">)</span>
-    <span class="n">mapper</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">log10</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;#</span><span class="si">%02x%02x%02x</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">255</span><span class="o">*</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;#</span><span class="si">%02x%02x%02x</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mapper</span><span class="o">.</span><span class="n">to_rgba</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="k">return</span> <span class="n">df</span></div>
+    <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">latlons</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">latlons</span> <span class="o">=</span> <span class="p">[</span><span class="n">latlons</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">latlons</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="n">color</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;darks&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="n">color</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">latlon</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">latlons</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+
+        <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">latlon</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;radius&quot;</span><span class="p">),</span>
+                      <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">line_color</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">line_color</span> <span class="o">=</span> <span class="p">[</span><span class="n">line_color</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlon</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">,</span> <span class="n">lcolor</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">latlons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">latlons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">line_color</span><span class="p">):</span>
+            <span class="n">fmap</span> <span class="o">=</span> <span class="n">add_line</span><span class="p">(</span><span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="n">line_color</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="n">fmap</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fmap</span></div>
 
 
-<div class="viewcode-block" id="color_categorical"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.color_categorical">[docs]</a><span class="k">def</span> <span class="nf">color_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">colors</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;darks&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">colors</span>
-    <span class="n">categories</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">color_col</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There are </span><span class="si">%i</span><span class="s2"> unique values but only </span><span class="si">%i</span><span class="s2"> colors were given&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">colors</span><span class="p">)))</span>
-    <span class="n">color_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">colors</span><span class="p">[:</span><span class="n">n</span><span class="p">]))</span>
-
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;color&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">color_col</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">color_map</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
-
-    <span class="k">return</span> <span class="n">df</span></div>
-
-
-<div class="viewcode-block" id="add_lat_lng"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.add_lat_lng">[docs]</a><span class="k">def</span> <span class="nf">add_lat_lng</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">lat_col</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">lng_col</span><span class="o">=</span><span class="s2">&quot;lng&quot;</span><span class="p">,</span> <span class="n">color_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">color_how</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="add_df_latlon"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.add_df_latlon">[docs]</a><span class="k">def</span> <span class="nf">add_df_latlon</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">lat_col</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">lng_col</span><span class="o">=</span><span class="s2">&quot;lng&quot;</span><span class="p">,</span> <span class="n">color_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">15000</span><span class="p">,</span>
+                <span class="n">color_how</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color_continuous_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">color_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">color_how</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">color_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">color_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">color_how</span> <span class="o">==</span> <span class="s2">&quot;continuous&quot;</span><span class="p">:</span>
-            <span class="n">df</span> <span class="o">=</span> <span class="n">color_continuous</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">color_continuous_kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">color_continuous_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color_continuous_kwargs</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">color_continuous</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must specify color_how as &#39;categorical&#39; or &#39;continuous&#39; or change color_col to None&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -282,11 +293,54 @@
     <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">))</span>
 
-    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">radius</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="k">else</span> <span class="n">radius</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">color</span> <span class="k">if</span> <span class="n">color_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">]</span>
-        <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">lat_col</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">lng_col</span><span class="p">]],</span> <span class="n">radius</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;radius&quot;</span><span class="p">),</span>
-                      <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+        <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">lat_col</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">lng_col</span><span class="p">]],</span> <span class="n">radius</span><span class="o">=</span><span class="n">r</span><span class="p">,</span>
+                      <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="n">fill_opacity</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="add_line"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.add_line">[docs]</a><span class="k">def</span> <span class="nf">add_line</span><span class="p">(</span><span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">))</span>
+
+    <span class="n">folium</span><span class="o">.</span><span class="n">PolyLine</span><span class="p">([[</span><span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="n">line_color</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="html_to_png"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.html_to_png">[docs]</a><span class="k">def</span> <span class="nf">html_to_png</span><span class="p">(</span><span class="n">htmlpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pngpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2560</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5625</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pngpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must give at least htmlpath or pngpath&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">htmlpath</span> <span class="o">=</span> <span class="n">pngpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.html&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pngpath</span> <span class="o">=</span> <span class="n">htmlpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+    <span class="n">tmpurl</span> <span class="o">=</span> <span class="s1">&#39;file://</span><span class="si">{htmlpath}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">htmlpath</span><span class="o">=</span><span class="n">htmlpath</span><span class="p">)</span>
+    <span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Safari</span><span class="p">()</span>
+    <span class="n">browser</span><span class="o">.</span><span class="n">set_window_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+
+    <span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tmpurl</span><span class="p">)</span>
+    <span class="c1"># Give the map tiles some time to load</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+    <span class="n">browser</span><span class="o">.</span><span class="n">save_screenshot</span><span class="p">(</span><span class="n">pngpath</span><span class="p">)</span>
+    <span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="save_map"><a class="viewcode-back" href="../../vishelper/vishelper.html#vishelper.geo.save_map">[docs]</a><span class="k">def</span> <span class="nf">save_map</span><span class="p">(</span><span class="n">fmap</span><span class="p">,</span> <span class="n">htmlpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pngpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2560</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5625</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pngpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must give at least htmlpath or pngpath&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">htmlpath</span> <span class="o">=</span> <span class="n">pngpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.html&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pngpath</span> <span class="o">=</span> <span class="n">htmlpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span>
+
+    <span class="n">fmap</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">htmlpath</span><span class="p">)</span>
+
+    <span class="n">html_to_png</span><span class="p">(</span><span class="n">htmlpath</span><span class="o">=</span><span class="n">htmlpath</span><span class="p">,</span> <span class="n">pngpath</span><span class="o">=</span><span class="n">pngpath</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="n">ratio</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -316,26 +370,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
