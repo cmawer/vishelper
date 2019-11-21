@@ -124,7 +124,8 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
     return fmap
 
 
-def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None, fill_opacity=1, radius=15000,
+def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None, fill_opacity=1, radius=15000, popup_col=None,
+                  radius_col=None, max_popup_width=2650,
                 color_how=None, colors=None, fmap=None, fill=True, color_continuous_kwargs=None, **kwargs):
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
@@ -146,12 +147,23 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None, fill_opacity
 
     if fmap is None:
         fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
-
+    if type(radius) != list:
+        radius = [radius] * len(df)
     for i, j in enumerate(df.index):
-        r = radius if type(radius) != list and type(radius) != np.ndarray else radius[i]
-        color = color if color_col is None else df.loc[j, "color"]
-        folium.Circle(location=[df.loc[j, lat_col], df.loc[j, lng_col]], radius=r,
+
+        r = df.loc[j, radius_col] if radius_col is not None else radius[i]
+        color = color if color_col is None else df.loc[j, color_col]
+        if popup_col is not None:
+            popup = df.loc[j, popup_col]
+            # iframe = folium.element.IFrame(html=popup, width=500, height=300)
+            popup = folium.Popup(popup, max_width=max_popup_width)
+        else:
+            popup = None
+        lat, lon = df.loc[j, lat_col], df.loc[j, lng_col]
+
+        folium.Circle(location=(lat, lon), radius=r, popup=popup,
                       fill=fill, color=color, fill_color=color, fill_opacity=fill_opacity, **kwargs).add_to(fmap)
+
     return fmap
 
 
