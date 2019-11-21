@@ -441,6 +441,7 @@ def heatmap(df, ax=None,
     ax.set_xticklabels(xticklabels, rotation=xrotation, size=label_size);
     ax.set_yticklabels(yticklabels, rotation=yrotation, size=label_size);
     ax = add_labels(ax, xlabel, ylabel, title)
+    ax.set_ylim(ax.get_ylim())
     return fig, ax
 
 
@@ -592,5 +593,3 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
         return ax
     else:
         return fig, ax
-
-
