@@ -275,7 +275,7 @@ class VisDF:
         axes_list = axes.ravel() if num_plots > 1 else [axes]
 
         for j, (ax, cols) in enumerate(zip(axes_list, columns_to_plot)):
-            kind = kind if isinstance(kind, str) else kind[j]
+            kind_j = kind if isinstance(kind, str) else kind[j]
             xlimi = xlim if type(xlim) != list else xlim[j]
             ylimi = ylim if type(ylim) != list else ylim[j]
 
@@ -301,23 +301,23 @@ class VisDF:
                                    titles[j],
                                    ax=ax)
                 # TO DO: add in color based on color_dict, add multi-line plotting...
-            elif isinstance(cols, list):
+            elif isinstance(cols, list) and len(cols) > 1:
 
                 ax = vh.plot(df_to_plot[cols[0]], df_to_plot[cols[1]], ax=ax,
-                             kind=kind,
+                             kind=kind_j,
                              **kwargs)
-                ax = vh.add_labels(xlabel=self.column_labels[cols[0 if kind != 'barh' else 1]],
-                                   ylabel=self.column_labels[cols[1 if kind != 'barh' else 0]],
+                ax = vh.add_labels(xlabel=self.column_labels[cols[0 if kind_j != 'barh' else 1]],
+                                   ylabel=self.column_labels[cols[1 if kind_j != 'barh' else 0]],
                                    title=None if titles is None else
                                    titles[j],
                                    ax=ax)
             else:
-
+                cols = cols[0] if isinstance(cols, list) else cols
                 ax = vh.plot(df_to_plot[cols], ax=ax,
-                             kind=kind,
+                             kind=kind_j,
                              **kwargs)
                 ax = vh.add_labels(xlabel=self.column_labels[cols],
-                                   ylabel=self.univariate_ylabels[kind],
+                                   ylabel=self.univariate_ylabels[kind_j],
                                    title=None if titles is None else
                                    titles[j],
                                    ax=ax)
