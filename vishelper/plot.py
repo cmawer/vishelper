@@ -66,7 +66,7 @@ def color_continuous(df, column_to_color, new_color_column="color", clip=True, l
 def color_categorical(df, column_to_color, new_color_column="color", colors=None):
     """Adds a column to a dataframe with colors assigned according to the category in the `column_to_color`"""
     colors = formatting["darks"] if colors is None else colors
-    categories = df.column_to_color.unique()
+    categories = df[column_to_color].unique()
     n = len(categories)
     if len(colors) < n:
         raise ValueError("There are %i unique values but only %i colors were given" % (n, len(colors)))
@@ -160,14 +160,21 @@ def add_dline(ax, **kwargs):
     return ax
 
 
-def labelfy(labels):
-    """Takes a list of column names, replaces underscores with spaces, and capitalizes to be used for plot labels."""
-    if isinstance(labels, str):
-        labels = ' '.join(labels.split('_')).capitalize()
-    elif isinstance(labels[0], str):
-        labels = [' '.join(lab.split('_')).capitalize() for lab in labels]
+def labelfy(labels, label_map=None, replacements=None):
+    formatted = []
+    for label in labels:
+        if label_map is not None and label in label_map:
+            formatted.append(label_map[label])
+        else:
+            if replacements is not None:
+                formatted_label = label.capitalize()
+                for replacement in replacements:
+                    formatted_label = formatted_label.replace(replacement[0], replacement[1])
 
-    return labels
+            else:
+                formatted_label = label.capitalize()
+            formatted.append(" ".join(formatted_label.split('_')))
+    return formatted
 
 
 def column_to_colors(df, column, colors=None):
@@ -441,7 +448,7 @@ def heatmap(df, ax=None,
     ax.set_xticklabels(xticklabels, rotation=xrotation, size=label_size);
     ax.set_yticklabels(yticklabels, rotation=yrotation, size=label_size);
     ax = add_labels(ax, xlabel, ylabel, title)
-    ax.set_ylim(ax.get_ylim())
+    ax.set_ylim([0, len(df)])
     return fig, ax
 
 
@@ -593,3 +600,21 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
         return ax
     else:
         return fig, ax
+
+
+def subplots(columns_to_plot, layout=None):
+    if isinstance(columns_to_plot, str):
+        columns_to_plot = [columns_to_plot]
+    elif not isinstance(columns_to_plot, list):
+        raise ValueError('`columns_to_plot` must be a string or list containing which columns to plot')
+    num_plots = len(columns_to_plot)
+    if layout is None:
+        if num_plots % 2 != 0:
+            layout = (num_plots, 1)
+        else:
+            layout = (int(np.ceil(num_plots / 2)), 2)
+    elif len(layout) != 2:
+        raise ValueError('please provide layout as (n_rows, n_cols)')
+    elif layout[0] * layout[1] < num_plots:
+        raise ValueError(
+            'layout provide does not have enough space for all desired plots')

@@ -24,7 +24,7 @@ geoformatting = {"zoom_start": 4,
                  "opacity":1,
                  "radius":15000,
                  "colors": vh.formatting["darks"],
-                 "tiles":"OpenStreetMap"}
+                 "tiles":"CartoDB positron"}
 
 
 def to_state_name(df, column, new_column):
@@ -38,7 +38,7 @@ def to_state_name(df, column, new_column):
 def basic_map(**kwargs):
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
-    fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
+    fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"), tiles=getfmt("tiles"))
     return fmap
 
 
@@ -125,16 +125,16 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
 
 
 def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None, fill_opacity=1, radius=15000, popup_col=None,
-                  radius_col=None, max_popup_width=2650,
+                  radius_col=None, max_popup_width=2650, raw_color_col=None,
                 color_how=None, colors=None, fmap=None, fill=True, color_continuous_kwargs=None, **kwargs):
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
     if color_col is not None:
         if color_how == "categorical":
-            df = vh.color_categorical(df, color_col, colors)
+            df = vh.color_categorical(df, color_col, new_color_column='color', colors=colors)
         elif color_how == "continuous":
             color_continuous_kwargs = {} if color_continuous_kwargs is None else color_continuous_kwargs
-            df = vh.color_continuous(df, color_col, **kwargs)
+            df = vh.color_continuous(df, color_col, new_color_column="color", **color_continuous_kwargs)
         else:
             raise ValueError("Must specify color_how as 'categorical' or 'continuous' or change color_col to None")
     else:
@@ -146,13 +146,13 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", color_col=None, fill_opacity
             color = colors
 
     if fmap is None:
-        fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"))
+        fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"), tiles=getfmt('tiles'))
     if type(radius) != list:
         radius = [radius] * len(df)
     for i, j in enumerate(df.index):
 
         r = df.loc[j, radius_col] if radius_col is not None else radius[i]
-        color = color if color_col is None else df.loc[j, color_col]
+        color = color if color_col is None and raw_color_col is None else df.loc[j, 'color'] if raw_color_col is None else df.loc[j, raw_color_col]
         if popup_col is not None:
             popup = df.loc[j, popup_col]
             # iframe = folium.element.IFrame(html=popup, width=500, height=300)
@@ -206,4 +206,4 @@ def save_map(fmap, htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.562
 
     fmap.save(htmlpath)
 
-    html_to_png(htmlpath=htmlpath, pngpath=pngpath, delay=delay, width=width, ratio=ratio)
+    html_to_png(htmlpath=os.path.abspath(htmlpath), pngpath=pngpath, delay=delay, width=width, ratio=ratio)
