@@ -3,6 +3,8 @@ Wrapper functions for easy, nicely formatted visuals for exploratory data analys
 
 
 ## Installation
+To install the package, do the following: 
+
 1. Clone this repository: 
 
   ```bash
