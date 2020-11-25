@@ -3,12 +3,7 @@ Wrapper functions for easy, nicely formatted visuals for exploratory data analys
 
 
 ## Installation
-To pip install direct from Github, run the following: 
-
-```bash
-pip install git+ssh://git@github.com/cmawer/vishelper.git
-```
-or you can do the following: 
+To install the package, do the following: 
 
 1. Clone this repository: 
 
