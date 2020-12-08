@@ -161,6 +161,9 @@ def add_dline(ax, **kwargs):
 
 
 def labelfy(labels, label_map=None, replacements=None):
+    if type(labels) == str:
+        labels = [labels]
+        return_single_label = True
     formatted = []
     for label in labels:
         if label_map is not None and label in label_map:
@@ -174,6 +177,8 @@ def labelfy(labels, label_map=None, replacements=None):
             else:
                 formatted_label = label.capitalize()
             formatted.append(" ".join(formatted_label.split('_')))
+    if return_single_label:
+        formatted = formatted[0]
     return formatted
 
 
