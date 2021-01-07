@@ -6,6 +6,9 @@ import matplotlib as mpl
 import logging
 from matplotlib.colors import LogNorm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+logger = logging.getLogger(__name__)
+
 formatting = {'font.size': 16,
               'tick.labelsize': 14,
               'tick.size': 10,
@@ -31,6 +34,7 @@ formatting = {'font.size': 16,
               'suptitle.size': 24}
 
 cmaps = {'diverging': sns.diverging_palette(244.4, 336.7, s=71.2, l=41.6, n=20),
+         'heatmap': sns.cubehelix_palette(8, start=.5, rot=-.75),
          'blues': sns.light_palette(formatting['darks'][0]),
          'reds': sns.light_palette(formatting['mediums'][4]),
          'teals': sns.light_palette(formatting["darks"][2]),
@@ -420,18 +424,20 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
 
 
 def heatmap(df, ax=None,
-            xlabel=None, ylabel=None, title=None, label_size=None,
+            label_size=None,
             xticklabels=None, yticklabels=None, log10=False,
             xrotation=90, yrotation=0, **kwargs):
     label_size = formatting['tick.labelsize'] if label_size is None else label_size
-    if 'figsize' in kwargs.keys():
-        figsize = kwargs.pop('figsize')
-    else:
-        figsize = formatting['figure.figsize']
+
     if ax is None:
+        if 'figsize' in kwargs.keys():
+            figsize = kwargs.pop('figsize')
+        else:
+            figsize = formatting['figure.figsize']
         fig, ax = plt.subplots(figsize=figsize)
+        return_fig = True
     else:
-        fig = None
+        return_fig = False
     yticklabels = df.index.tolist() if yticklabels is None else yticklabels
     xticklabels = df.columns.tolist() if xticklabels is None else xticklabels
 
@@ -446,15 +452,21 @@ def heatmap(df, ax=None,
 
     if 'cmap' in kwargs:
         cmap = kwargs.pop("cmap")
+        if isinstance(cmap, str) and cmap in cmaps:
+            cmap = cmaps[cmap]
     else:
-        cmap = sns.cubehelix_palette(8, start=.5, rot=-.75)
+        cmap = cmaps['heatmap']
 
     ax = sns.heatmap(df, cmap=cmap, **kwargs);
     ax.set_xticklabels(xticklabels, rotation=xrotation, size=label_size);
     ax.set_yticklabels(yticklabels, rotation=yrotation, size=label_size);
-    ax = add_labels(ax, xlabel, ylabel, title)
+
     ax.set_ylim([0, len(df)])
-    return fig, ax
+
+    if return_fig:
+        return fig, ax
+    else:
+        return ax
 
 
 def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, color_map=None, xrotation=90, **kwargs):
@@ -491,17 +503,48 @@ def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, col
         return fig, ax
 
 
-plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot)
+def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
+    if y is not None:
+        y = listify(y, order=2)
+        x = listify(x, order=2, multiplier=np.shape(y)[0])
+    else:
+        x = listify(x, order=2)
+    if df is not None:
+        logger.debug(x)
+        logger.debug(y)
+        x = [df[x] for xi in x]
+        y = [df[y] for yi in y]
+    for j, onex in enumerate(x):
+
+        if labels is None:
+            label = 'Set ' + str(j)
+        else:
+            label = labels[j]
+        if y is None:
+            ax = plot_function(onex, ax=ax,
+                               color=plot_color[j],
+                               label=label, **kwargs)
+        else:
+            ax = plot_function(onex, y=y[j], ax=ax,
+                               color=plot_color[j],
+                               label=label, **kwargs)
+    if j > 0:
+        plot_legend = True
+    else:
+        plot_legend = False
+    return ax, plot_legend
 
 
-def plot(x, y=None, kind=None, plot_function=None, ax=None,
+plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot, heatmap=heatmap)
+
+
+def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
          xlabel=None, ylabel=None, title=None, legend=None, legend_kwargs=None, ticks=None,
          labels=None, color=None,  color_data=None, figsize=None, xlim=None, ylim=None, **kwargs):
     """
 
     Args:
-        x (list): Data to be plotted in the x-axis or for univariate plots. If plotting a heatmap,
-            x should be be a :py:class:`pandas.DataFrame()`
+        x (list): Data to be plotted in the x-axis or for univariate plots. If None, df must be provided.
         y (:obj:`list`, optional): Default None (implies univariate plot).
         kind (:obj:`str`, optional): Type of plot. Defaults to None, which implies `plot_function` should be given.
             Univariate continuous (y=None)
@@ -514,7 +557,7 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
 
             Bivariate: categorical x continuous
             * boxplot
-
+        df: Dataframe containing the data to be plotted
         plot_function: Default None. If "kind" is not given, can provide a plot function with the
             form plot_function(x, y, ax, **kwargs) or plot_function(x, ax, **kwargs)
         ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`, optional): Matplotlib axes handle. Default is None
@@ -548,11 +591,8 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
         ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`): Axes object with the plot(s)
 
     """
-    if y is not None:
-        y = listify(y, order=2)
-        x = listify(x, order=2, multiplier=np.shape(y)[0])
-    else:
-        x = listify(x, order=2)
+
+
 
     if ax is None:
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'] if figsize is None else figsize)
@@ -572,20 +612,13 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
     else:
         plot_color = formatting["darks"] + formatting['lights']
 
-    for j, onex in enumerate(x):
+    if x is None:
+        assert df is not None, 'Must provide either x or df'
+        ax = plot_function(df, ax=ax, **kwargs)
+        plot_legend = False
+    else:
+        ax, plot_legend = plotxy(x, y, ax, plot_function, plot_color, df=df, labels=labels, **kwargs)
 
-        if labels is None:
-            label = 'Set ' + str(j)
-        else:
-            label = labels[j]
-        if y is None:
-            ax = plot_function(onex, ax=ax,
-                               color=plot_color[j],
-                               label=label, **kwargs)
-        else:
-            ax = plot_function(onex, y=y[j], ax=ax,
-                               color=plot_color[j],
-                               label=label, **kwargs)
     ax = add_labels(ax, xlabel, ylabel, title)
 
     if ticks is not None:
@@ -593,7 +626,7 @@ def plot(x, y=None, kind=None, plot_function=None, ax=None,
     ax.tick_params(labelsize=formatting['tick.labelsize'],
                    size=formatting['tick.size'])
 
-    if (j > 0 and legend is None) or legend:
+    if (plot_legend and legend is None) or legend:
         if legend_kwargs is None:
             ax.legend(loc=formatting['legend.location'],
                       fontsize=formatting['legend.fontsize'])
