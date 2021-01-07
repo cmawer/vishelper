@@ -367,8 +367,6 @@ def barh(x, y, ax=None, color=None, label=None, **kwargs):
     else:
         return fig, ax
 
-    return fig, ax
-
 
 def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
     """Plots a histogram based on values of `x`"""
