@@ -38,7 +38,8 @@ cmaps = {'diverging': sns.diverging_palette(244.4, 336.7, s=71.2, l=41.6, n=20),
          'blues': sns.light_palette(formatting['darks'][0]),
          'reds': sns.light_palette(formatting['mediums'][4]),
          'teals': sns.light_palette(formatting["darks"][2]),
-         'purples': sns.light_palette(formatting['darks'][4])}
+         'purples': sns.light_palette(formatting['darks'][4]),
+         'barv': sns.cubehelix_palette}
 
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 map_to_days = dict(zip(range(7), days_of_week))
@@ -466,6 +467,102 @@ def heatmap(df, ax=None,
     else:
         return ax
 
+def barv(x=None, y=None, ax=None, df=None, plot_color=None, label=None,
+            label_size=None,
+            xticklabels=None, yticklabels=None,
+            xrotation=90, yrotation=0, **kwargs):
+    label_size = formatting['tick.labelsize'] if label_size is None else label_size
+
+# TODO: Decide what to do when all three of x, y, df are provided as inputs
+# TODO: Include legend when df is provided as input
+# TODO: Call barv directly versus calling via vh.plot
+# TODO: Decide on name - bar versus barv
+# TODO: Decide what to do when y=list of lists: superimposed bars or side by side bars or stacked bars?
+# TODO: Allow a list of color names when df is given, or require use of cmap argument to specify colors?
+
+# If df is None while both x and y are not None, convert x and y to df
+    if df is None:
+        if x is not None and isinstance(x, list):
+            assert y is not None and isinstance(y, list), 'Must provide lists for both x and y'
+            df = pd.DataFrame(y, index=x, columns=[label])
+        else:
+            raise ValueError('Either a dataframe df or lists x and y must be provided')
+
+    if ax is None:
+        if 'figsize' in kwargs.keys():
+            figsize = kwargs.pop('figsize')
+        else:
+            figsize = formatting['figure.figsize']
+        fig, ax = plt.subplots(figsize=figsize)
+        return_fig = True
+    else:
+        return_fig = False
+
+    if 'cmap' in kwargs:
+        cmap = kwargs.pop("cmap")
+        if isinstance(cmap, str) and cmap in cmaps:
+            cmap = cmaps[cmap]
+    else:
+        cmap = cmaps['barv'](len(df.columns), start=.5, rot=-.75)
+
+# Call barplot function using one column of the dataframe at a time
+    if isinstance(df, pd.DataFrame):                    # Ina: in future, change this to assert?
+        for i in range(len(df.columns)):
+
+            kwargs['label']=df.columns[i]
+
+            if 'color' in kwargs:                       # use color from kwargs = first choice
+                print('kwargs[color] is:',kwargs['color'])
+                ax.bar(
+                    list(df.index.values),
+                    df[df.columns[i]].values,
+                    bottom=df.loc[:, df.columns[0]:df.columns[i]].sum(axis=1).values -
+                    df.loc[:, df.columns[i]].values,
+                    # label=df.columns[i],
+                    **kwargs);
+
+            elif plot_color is not None:              # use colors from plot_color list = second choice
+                print('plot_color is:',plot_color)
+                ax.bar(
+                    list(df.index.values),
+                    df[df.columns[i]].values,
+                    bottom=df.loc[:, df.columns[0]:df.columns[i]].sum(axis=1).values -
+                    df.loc[:, df.columns[i]].values,
+                    #label=df.columns[i],
+                    color=plot_color[i], **kwargs);
+
+            else:                                      # use colors given by cmap = third choice
+                print('cmap is:',cmap)
+                ax.bar(
+                    list(df.index.values),
+                    df[df.columns[i]].values,
+                    bottom=df.loc[:, df.columns[0]:df.columns[i]].sum(axis=1).values -
+                    df.loc[:, df.columns[i]].values,
+                    #label=df.columns[i],
+                    color=cmap[i], **kwargs);
+
+    print('xticklabels is:', xticklabels)
+    xticklabels = df.index.tolist() if xticklabels is None else xticklabels
+    ax.set_xticklabels(xticklabels, rotation=xrotation, size=label_size);
+
+    print('yticklabels is:', yticklabels)
+    if yticklabels is not None:
+        ax.set_yticklabels(yticklabels, rotation=yrotation, size=label_size);
+
+# TODO Stacked barplot of proportions should have set_ylim([0,1])
+#    ax.set_ylim([0, 1])
+
+# TODO: How to specify legend when df is provided as input.  Need to return fig, ax, plot_legend?
+    # if len(df.columns) > 0:
+    #     plot_legend = True
+    # else:
+    #     plot_legend = False
+
+    if return_fig:
+        return fig, ax    #return plot_legend also?
+    else:
+        return ax         #return plot_legend also?
+
 
 def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, color_map=None, xrotation=90, **kwargs):
     if ax is None:
@@ -519,11 +616,11 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
         else:
             label = labels[j]
         if y is None:
-            ax = plot_function(onex, ax=ax,
+            ax = plot_function(onex, ax=ax,                             # Ina: Should be "x="?  Not needed for barv
                                color=plot_color[j],
                                label=label, **kwargs)
         else:
-            ax = plot_function(onex, y=y[j], ax=ax,
+            ax = plot_function(x=onex, y=y[j], ax=ax,                   # Ina: added "x=", needed for barv
                                color=plot_color[j],
                                label=label, **kwargs)
     if j > 0:
@@ -533,7 +630,7 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
     return ax, plot_legend
 
 
-plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot, heatmap=heatmap)
+plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot, heatmap=heatmap, barv=barv)
 
 
 def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
@@ -608,11 +705,16 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
     elif color is not None:
         plot_color = [color] if type(color) == str else color
     else:
-        plot_color = formatting["darks"] + formatting['lights']
+        plot_color = None if 'cmap' in kwargs else formatting["darks"] + formatting['lights']
+ #       plot_color = formatting["darks"] + formatting['lights']  #previous code
 
     if x is None:
         assert df is not None, 'Must provide either x or df'
-        ax = plot_function(df, ax=ax, **kwargs)
+        ax = plot_function(df=df, ax=ax, **kwargs)                      # Ina: added "df=" to parameter list
+                                                                        # Ina: add color or plot_color to parameter list?
+                                                                        # Ina: add labels to parameter list?
+                                                                        # Ina: return plot_legend from function call?
+                                                                        # Ina: add'l params may break heatmap
         plot_legend = False
     else:
         ax, plot_legend = plotxy(x, y, ax, plot_function, plot_color, df=df, labels=labels, **kwargs)
