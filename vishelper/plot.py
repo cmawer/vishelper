@@ -423,7 +423,7 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
 
 
 def heatmap(df, ax=None,
-            label_size=None,
+            plot_color=None, label_size=None,
             xticklabels=None, yticklabels=None, log10=False,
             xrotation=90, yrotation=0, **kwargs):
     label_size = formatting['tick.labelsize'] if label_size is None else label_size
@@ -552,7 +552,7 @@ def barv(x=None, y=None, ax=None, df=None, plot_color=None, label=None,
 # TODO Stacked barplot of proportions should have set_ylim([0,1])
 #    ax.set_ylim([0, 1])
 
-# TODO: How to specify legend when df is provided as input.  Need to return fig, ax, plot_legend?
+# TODO: How to specify legend when df is provided as input.  Need to return fig, ax, plot_legend?e
     # if len(df.columns) > 0:
     #     plot_legend = True
     # else:
@@ -599,16 +599,18 @@ def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, col
 
 
 def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
+    if df is not None:
+        if labels is None:
+            labels = [y] if isinstance(y,  str) else y
+        x = df[x].tolist() if isinstance(x, str) else [df[xi].tolist() for xi in x]
+        y = df[y].tolist() if isinstance(y, str) else [df[yi].tolist() for yi in y]
+
     if y is not None:
         y = listify(y, order=2)
         x = listify(x, order=2, multiplier=np.shape(y)[0])
     else:
         x = listify(x, order=2)
-    if df is not None:
-        logger.debug(x)
-        logger.debug(y)
-        x = [df[x] for xi in x]
-        y = [df[y] for yi in y]
+
     for j, onex in enumerate(x):
 
         if labels is None:
@@ -687,8 +689,6 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
 
     """
 
-
-
     if ax is None:
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'] if figsize is None else figsize)
     else:
@@ -710,7 +710,7 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
 
     if x is None:
         assert df is not None, 'Must provide either x or df'
-        ax = plot_function(df=df, ax=ax, **kwargs)                      # Ina: added "df=" to parameter list
+        ax = plot_function(df=df, ax=ax, plot_color=plot_color, **kwargs)                      # Ina: added "df=" to parameter list
                                                                         # Ina: add color or plot_color to parameter list?
                                                                         # Ina: add labels to parameter list?
                                                                         # Ina: return plot_legend from function call?
