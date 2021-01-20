@@ -39,7 +39,7 @@ cmaps = {'diverging': sns.diverging_palette(244.4, 336.7, s=71.2, l=41.6, n=20),
          'reds': sns.light_palette(formatting['mediums'][4]),
          'teals': sns.light_palette(formatting["darks"][2]),
          'purples': sns.light_palette(formatting['darks'][4]),
-         'barv': sns.cubehelix_palette}
+         'bar': sns.cubehelix_palette}
 
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 map_to_days = dict(zip(range(7), days_of_week))
@@ -467,27 +467,20 @@ def heatmap(df, ax=None,
     else:
         return ax
 
-def barv(x=None, y=None, ax=None, df=None, plot_color=None, label=None,
-            label_size=None,
+
+def bar(x=None, y=None, ax=None, plot_color=None, label=None,
+            label_size=None, labels=None,
             xticklabels=None, yticklabels=None,
             xrotation=90, yrotation=0, **kwargs):
     label_size = formatting['tick.labelsize'] if label_size is None else label_size
 
 # TODO: Decide what to do when all three of x, y, df are provided as inputs
 # TODO: Include legend when df is provided as input
-# TODO: Call barv directly versus calling via vh.plot
-# TODO: Decide on name - bar versus barv
+# TODO: Call bar directly versus calling via vh.plot
+# TODO: Decide on name - bar versus bar
 # TODO: Decide what to do when y=list of lists: superimposed bars or side by side bars or stacked bars?
 # TODO: Allow a list of color names when df is given, or require use of cmap argument to specify colors?
-
-# If df is None while both x and y are not None, convert x and y to df
-    if df is None:
-        if x is not None and isinstance(x, list):
-            assert y is not None and isinstance(y, list), 'Must provide lists for both x and y'
-            df = pd.DataFrame(y, index=x, columns=[label])
-        else:
-            raise ValueError('Either a dataframe df or lists x and y must be provided')
-
+# TODO: Consider what happens when different x are given
     if ax is None:
         if 'figsize' in kwargs.keys():
             figsize = kwargs.pop('figsize')
@@ -498,51 +491,20 @@ def barv(x=None, y=None, ax=None, df=None, plot_color=None, label=None,
     else:
         return_fig = False
 
-    if 'cmap' in kwargs:
-        cmap = kwargs.pop("cmap")
-        if isinstance(cmap, str) and cmap in cmaps:
-            cmap = cmaps[cmap]
-    else:
-        cmap = cmaps['barv'](len(df.columns), start=.5, rot=-.75)
-
-# Call barplot function using one column of the dataframe at a time
-    if isinstance(df, pd.DataFrame):                    # Ina: in future, change this to assert?
-        for i in range(len(df.columns)):
-
-            kwargs['label']=df.columns[i]
-
-            if 'color' in kwargs:                       # use color from kwargs = first choice
-                print('kwargs[color] is:',kwargs['color'])
-                ax.bar(
-                    list(df.index.values),
-                    df[df.columns[i]].values,
-                    bottom=df.loc[:, df.columns[0]:df.columns[i]].sum(axis=1).values -
-                    df.loc[:, df.columns[i]].values,
-                    # label=df.columns[i],
-                    **kwargs);
-
-            elif plot_color is not None:              # use colors from plot_color list = second choice
-                print('plot_color is:',plot_color)
-                ax.bar(
-                    list(df.index.values),
-                    df[df.columns[i]].values,
-                    bottom=df.loc[:, df.columns[0]:df.columns[i]].sum(axis=1).values -
-                    df.loc[:, df.columns[i]].values,
-                    #label=df.columns[i],
-                    color=plot_color[i], **kwargs);
-
-            else:                                      # use colors given by cmap = third choice
-                print('cmap is:',cmap)
-                ax.bar(
-                    list(df.index.values),
-                    df[df.columns[i]].values,
-                    bottom=df.loc[:, df.columns[0]:df.columns[i]].sum(axis=1).values -
-                    df.loc[:, df.columns[i]].values,
-                    #label=df.columns[i],
-                    color=cmap[i], **kwargs);
-
+    bottom = np.zeros(len(x[0]))  # Assuming len(x) same for all x
+    for j, onex, oney in enumerate(zip(x, y)):
+        label = labels[j]
+        color = plot_color[j]
+        ax.bar(
+            onex,
+            oney,
+            bottom=bottom,
+            color=color,
+            label=label,
+            **kwargs);
+        bottom = bottom + np.array(oney)
     print('xticklabels is:', xticklabels)
-    xticklabels = df.index.tolist() if xticklabels is None else xticklabels
+    xticklabels = onex if xticklabels is None else xticklabels
     ax.set_xticklabels(xticklabels, rotation=xrotation, size=label_size);
 
     print('yticklabels is:', yticklabels)
@@ -566,14 +528,15 @@ def barv(x=None, y=None, ax=None, df=None, plot_color=None, label=None,
 
 def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, color_map=None, xrotation=90, **kwargs):
     if ax is None:
+        kwargs.pop("label")
+
+    if data is not None and type(x)==list:
+
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
     else:
         fig = None
 
     if "label" in kwargs:
-        kwargs.pop("label")
-
-    if data is not None and type(x)==list:
         x = x[0]
         y = y[0]
     ax = sns.boxplot(x=x, y=y, data=data, palette=palette, hue=hue, ax=ax, **kwargs)
@@ -611,28 +574,32 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
     else:
         x = listify(x, order=2)
 
-    for j, onex in enumerate(x):
-
-        if labels is None:
-            label = 'Set ' + str(j)
-        else:
-            label = labels[j]
-        if y is None:
-            ax = plot_function(onex, ax=ax,                             # Ina: Should be "x="?  Not needed for barv
-                               color=plot_color[j],
-                               label=label, **kwargs)
-        else:
-            ax = plot_function(x=onex, y=y[j], ax=ax,                   # Ina: added "x=", needed for barv
-                               color=plot_color[j],
-                               label=label, **kwargs)
-    if j > 0:
+    if 'stacked' in kwargs and kwargs['stacked']:
+        ax = plot_function(x=x, y=y, plot_color=plot_color, labels=labels, **kwargs)
         plot_legend = True
     else:
-        plot_legend = False
+        for j, onex in enumerate(x):
+
+            if labels is None:
+                label = 'Set ' + str(j)
+            else:
+                label = labels[j]
+            if y is None:
+                ax = plot_function(x=onex, ax=ax,                             # Ina: Should be "x="?  Not needed for bar
+                                   color=plot_color[j],
+                                   label=label, **kwargs)
+            else:
+                ax = plot_function(x=onex, y=y[j], ax=ax,                   # Ina: added "x=", needed for bar
+                                   color=plot_color[j],
+                                   label=label, **kwargs)
+        if j > 0:
+            plot_legend = True
+        else:
+            plot_legend = False
     return ax, plot_legend
 
 
-plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot, heatmap=heatmap, barv=barv)
+plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot, heatmap=heatmap, bar=bar)
 
 
 def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
