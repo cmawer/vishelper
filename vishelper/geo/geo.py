@@ -72,16 +72,29 @@ def basic_map(**kwargs):
     return fmap
 
 
-def filter_geojson(geojson_dict, geo_values, geo_property='ZCTA5CE10'):
+def filter_geojson(geojson_dict, df, geo_col, geojson_key='ZCTA5CE10', filter_geos=True):
 
     # We want to only include features that are in our dataset so we clear the features key and rebuild it.
     filtered_geojson_dict = geojson_dict.copy()
     filtered_geojson_dict['features'] = []
+    geo_values = df[geo_col].unique()
+    included_geos = []
 
     for feat in geojson_dict['features']:
-        if feat['properties'][geo_property] in geo_values:
+        geojson_val = feat['properties'][geojson_key]
+        if (filter_geos and geojson_val in geo_values) or not filter_geos:
             filtered_geojson_dict['features'].append(feat)
-    return filtered_geojson_dict
+            included_geos.append(geojson_val)
+
+    filtered_df = df[df[geo_col].isin(included_geos)]
+    not_included_geos = df[~df[geo_col].isin(included_geos)][geo_col].unique()
+    if len(not_included_geos) > 0:
+        if len(not_included_geos) > 20:
+            logger.warning('Over 20 geos were not in the provided geojson and will not be plotted.')
+        else:
+            logger.warning("The following geos were not in the provided geojson and will not be plotted: %s",
+                           ','.join(not_included_geos))
+    return filtered_geojson_dict, filtered_df
 
 
 def read_geojson(geo_data):
@@ -174,10 +187,10 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
 
     geojson_dict = read_geojson(geo_data)
 
-    if df is not None and filter_geos:
+    if df is not None:
         n_geos_original = len(geojson_dict['features'])
         json_key = key_on.split('.')[-1]
-        geojson_dict = filter_geojson(geojson_dict, df[geo_column].values, json_key)
+        geojson_dict, filtered_df = filter_geojson(geojson_dict, df.copy(), geo_column, json_key, filter_geos)
         logger.info('geo_data reduced to %i regions from %i', len(geojson_dict['features']), n_geos_original)
 
     if fmap is None:
@@ -292,15 +305,21 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng",  radius_col=None, radius=150
     """
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
-    if color_col is not None:
+    if raw_color_col is not None and raw_color_col in df.columns:
+        logger.debug('Using raw color in %s column', raw_color_col)
+        if color_col is not None:
+            logger.warning('%s column already in dataframe so %s column will not be used. Change `raw_color_col` '
+                           'if you want a new color mapping to be created.', raw_color_col, color_col)
+    elif color_col is not None:
         if color_how == "categorical":
             df = vh.color_categorical(df, color_col, new_color_column=raw_color_col, colors=colors)
         elif color_how == "continuous":
             color_continuous_kwargs = {} if color_continuous_kwargs is None else color_continuous_kwargs
-            df = vh.color_continuous(df, color_col, new_color_column="color", **color_continuous_kwargs)
+            df = vh.color_continuous(df, color_col, new_color_column=raw_color_col, **color_continuous_kwargs)
         else:
             raise ValueError("Must specify color_how as 'categorical' or 'continuous' or change color_col to None")
     else:
+        raw_color_col = None
         if colors is None:
             color = vh.formatting["darks"][0]
         elif type(colors) == list:
@@ -312,13 +331,13 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng",  radius_col=None, radius=150
         fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"), tiles=getfmt('tiles'))
     if type(radius) != list:
         radius = [radius] * len(df)
+
     for i, j in enumerate(df.index):
 
         r = df.loc[j, radius_col] if radius_col is not None else radius[i]
-        color = color if color_col is None and raw_color_col is None else df.loc[j, raw_color_col]
+        color = color if raw_color_col is None else df.loc[j, raw_color_col]
         if popup_col is not None:
             popup = df.loc[j, popup_col]
-            # iframe = folium.element.IFrame(html=popup, width=500, height=300)
             popup = folium.Popup(popup, max_width=max_popup_width)
         else:
             popup = None
