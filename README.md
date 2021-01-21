@@ -17,12 +17,14 @@ To install the package, do the following:
   pip install .
   ```
 
-## Requirements 
-To be able to save a folium map as a png, install `selenium`: 
+## Dependencies
+Install the packages in `requirements.txt`  
 
 ```bash
-pip install selenium~=3.141.0
+pip install -r requirements.txt 
 ```
+
+The functions in this package have been built to be fairly flexible with various versions of the packages required but the enclosed versions are those that have been used.
 
 ## Guide 
 See `vishelper-demo.ipynb` for step by step guide 
