@@ -1,15 +1,14 @@
-import folium
 import json
-import vishelper as vh
-import ipywidgets as widgets
-import os
 import logging
-import matplotlib as mpl
+import os
+import time
+
+import folium
+import ipywidgets as widgets
 import numpy as np
 import requests
-from selenium import webdriver
-import time
-import logging
+
+import vishelper as vh
 
 logger = logging.getLogger(__name__)
 to_geo_dir = lambda x: os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "data/")), x)
@@ -361,6 +360,7 @@ def add_line(latlonA, latlonB, line_color="black", fmap=None, **kwargs):
 
 
 def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, browser=None):
+
     if htmlpath is None and pngpath is None:
         raise ValueError("Must give at least htmlpath or pngpath")
     elif htmlpath is None:
@@ -371,6 +371,7 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
     tmpurl = 'file://{htmlpath}'.format(htmlpath=htmlpath)
 
     if browser is None:
+        from selenium import webdriver
         browser = webdriver.Safari()
 
     browser.set_window_size(width, width * ratio)
