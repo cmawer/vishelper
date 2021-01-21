@@ -384,7 +384,7 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
     browser.quit()
 
 
-def save_map(fmap, htmlpath=None, pngpath=None, png=True, delay=5, width=2560, ratio=0.5625, browser=None):
+def save_map(fmap, htmlpath=None, pngpath=None, png=False, delay=5, width=2560, ratio=0.5625, browser=None):
 
     if htmlpath is None and pngpath is None:
         raise ValueError("Must give at least htmlpath or pngpath")
@@ -397,4 +397,4 @@ def save_map(fmap, htmlpath=None, pngpath=None, png=True, delay=5, width=2560, r
 
     if png:
         html_to_png(htmlpath=os.path.abspath(htmlpath), pngpath=pngpath, delay=delay,
-                    width=width, ratio=ratio, browser=None)
+                    width=width, ratio=ratio, browser=browser)
