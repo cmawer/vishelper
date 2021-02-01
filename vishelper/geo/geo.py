@@ -110,7 +110,7 @@ def read_geojson(geo_data):
 
 
 def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_data=None, key_on=None,
-             legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, **kwargs):
+             legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, threshold_scale=None, **kwargs):
     """Creates a choropleth map based on a dataframe. Colors regions in a map based on provided data.
 
     Must provide geo_type *or* geo_data and key_on.
@@ -147,6 +147,10 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
         filter_geos (`bool`): If True,  will filter out all geoJSON entries for regions not
             included in the dataframe, `df`. This is typically necessary as folium generally
             won't plot anything if there isn't a match for each region.
+        threshold_scale (list): List of thresholds for coloring the data. The list must have more than three values,
+            each item must be larger in value than the last. All data must have values between the first and
+            last items of the list. Example: [100, 200, 300, 400] In this case, all data in df[color_column] must
+            be between 100 and 400.
         **kwargs:
             location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.
             zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting
@@ -202,6 +206,7 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
     folium.Choropleth(
         geo_data=geojson_dict,
         data=df,
+        threshold_scale=threshold_scale,
         columns=[geo_column, color_column],
         key_on=key_on,
         reset=reset,
