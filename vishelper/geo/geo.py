@@ -27,10 +27,10 @@ geoformatting = {"zoom_start": 4,
                  "fill_color_single": vh.formatting["darks"][0],
                  "fill_opacity": 1,
                  "line_opacity": 1,
-                 "opacity":1,
-                 "radius":15000,
+                 "opacity": 1,
+                 "radius": 15000,
                  "colors": vh.formatting["darks"],
-                 "tiles":"CartoDB positron"}
+                 "tiles": "CartoDB positron"}
 
 
 def to_state_name(df, state_column, new_column):
@@ -48,7 +48,9 @@ def to_state_name(df, state_column, new_column):
     df[new_column] = df[state_column].apply(lambda x: x if x not in state_map else state_map[x])
     non_states = list(set(df[state_column].unique()) - set(state_map.keys()))
     if len(non_states) > 0:
-        logging.warning("The following values were not state names and were kept the same in the new column: %s" % ", ".join([str(s) for s in non_states]))
+        logging.warning(
+            "The following values were not state names and were kept the same in the new column: %s" % ", ".join(
+                [str(s) for s in non_states]))
     return df
 
 
@@ -72,7 +74,6 @@ def basic_map(**kwargs):
 
 
 def filter_geojson(geojson_dict, df, geo_col, geojson_key='ZCTA5CE10', filter_geos=True):
-
     # We want to only include features that are in our dataset so we clear the features key and rebuild it.
     filtered_geojson_dict = geojson_dict.copy()
     filtered_geojson_dict['features'] = []
@@ -220,10 +221,9 @@ def plot_subset(plot_function, df, option, option_column, **kwargs):
 
 def slider_interact(plot_function, df, options, option_column, initial_option=None, option_label=None,
                     disabled=False, button_style='', **kwargs):
-
     if option_label is None:
         option_label = vh.labelfy(option_column)
-        
+
     option_slider = widgets.SelectionSlider(options=options,
                                             value=options[0] if initial_option is None else initial_option,
                                             description=option_label,
@@ -255,7 +255,6 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
     assert len(color) == len(latlons)
 
     for latlon, col in zip(latlons, color):
-
         folium.Circle(location=latlon, radius=getfmt("radius"),
                       fill=fill, color=col, fill_color=col).add_to(fmap)
     if lines:
@@ -269,10 +268,10 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
     return fmap
 
 
-def add_df_latlon(df, lat_col="lat", lng_col="lng",  radius_col=None, radius=15000,
+def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=15000,
                   color_col=None, raw_color_col='color', color_how=None, colors=None,
                   fill=True, fill_opacity=1, color_continuous_kwargs=None,
-                  popup_col=None,  max_popup_width=2650, fmap=None, **kwargs):
+                  popup_col=None, max_popup_width=2650, fmap=None, **kwargs):
     """Add points to a map from data in a dataframe. Can color and size points based on data columns.
 
     Args:
@@ -363,7 +362,6 @@ def add_line(latlonA, latlonB, line_color="black", fmap=None, **kwargs):
 
 
 def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, browser=None):
-
     if htmlpath is None and pngpath is None:
         raise ValueError("Must give at least htmlpath or pngpath")
     elif htmlpath is None:
@@ -388,7 +386,6 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
 
 
 def save_map(fmap, htmlpath=None, pngpath=None, png=False, delay=5, width=2560, ratio=0.5625, browser=None):
-
     if htmlpath is None and pngpath is None:
         raise ValueError("Must give at least htmlpath or pngpath")
     elif htmlpath is None:
