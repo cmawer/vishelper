@@ -48,7 +48,7 @@ def to_state_name(df, state_column, new_column):
     df[new_column] = df[state_column].apply(lambda x: x if x not in state_map else state_map[x])
     non_states = list(set(df[state_column].unique()) - set(state_map.keys()))
     if len(non_states) > 0:
-        logging.warning("The following values were not state names and were kept the same in the new column: %s" % ", ".join(non_states))
+        logging.warning("The following values were not state names and were kept the same in the new column: %s" % ", ".join([str(s) for s in non_states]))
     return df
 
 
