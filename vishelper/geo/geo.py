@@ -166,6 +166,7 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
     else:
         assert color_column in df.columns, 'color_column must be provided to indicate which column to use in coloring'
         assert geo_column in df.columns, 'geo_column must be provided to indicate which column contains geographic key'
+        assert len(df) > 0, 'Dataframe, df, must have at least one row of data to plot'
 
         fill_color = geoformatting['fill_color'] if fill_color is None else fill_color
 
@@ -191,6 +192,8 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
         json_key = key_on.split('.')[-1]
         geojson_dict, filtered_df = filter_geojson(geojson_dict, df.copy(), geo_column, json_key, filter_geos)
         logger.info('geo_data reduced to %i regions from %i', len(geojson_dict['features']), n_geos_original)
+        if len(filtered_df) == 0:
+            raise ValueError('No rows in the dataframe were found in the geoJSON so there is nothing to plot.')
 
     if fmap is None:
         fmap = basic_map(**kwargs)
