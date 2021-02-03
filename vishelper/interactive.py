@@ -7,11 +7,11 @@ from bokeh.models import LinearColorMapper, BasicTicker, PrintfTickFormatter, Co
 from bokeh.plotting import figure
 
 
-def cal_heat(df,
+def interactive_heatmap(df,
              save_path,
              ycolumn='dayofweek',
              xcolumn='weekof',
-             value_column='tot_wgt',
+             value_column='value',
              x_range=None,
              y_range=None,
              colors=None,
@@ -26,10 +26,13 @@ def cal_heat(df,
              toolbar_location='below',
              tooltips=None,
              label_font_size="10pt",
-             xlabel=None,
-             ylabel=None):
-    """Creates a calendar heatmap with rows representing days of the week,
-    columns representing weeks of the year, colored according to `value_column`
+             xlabel_orientation=None,
+             colorbar_label_standoff=20,
+             colorbar_location=None,
+             colorbar_place='right',
+             xlabel="",
+             ylabel=""):
+    """Creates an interactive heatmap with tooltips
 
     Args:
         df:
@@ -56,8 +59,13 @@ def cal_heat(df,
         toolbar_location:
         tooltips:
         label_font_size:
-        xlabel:
-        ylabel:
+        xlabel_orientation (float): Orientation of labels on x-axis. If left as None, default is pi/3
+        colorbar_label_standoff (int): How much space to leave between colorbar and colorbar labels. Default 20
+        colorbar_location (tuple): Location for placing the colorbar. If left as None, default is (0,0).
+        colorbar_place (str, optional) : where to add the colorbar (default: 'right')
+                Valid places are: 'left', 'right', 'above', 'below', 'center'.
+        xlabel (str): Label for x-axis. Default=""
+        ylabel (str): Label for y-axis. Default=""
 
     Returns:
 
@@ -81,13 +89,12 @@ def cal_heat(df,
     x_range = [str(x) for x in x_range]
     y_range = [str(y) for y in y_range]
 
-    xlabel = xcolumn if xlabel is None else xlabel
-    ylabel = ycolumn if ylabel is None else ylabel
-
     if tooltips is not None:
         p = figure(
             title=title,
             x_range=x_range,
+            x_axis_label=xlabel,
+            y_axis_label=ylabel,
             y_range=list(reversed(y_range)),
             x_axis_location=x_axis_location,
             plot_width=plot_width,
@@ -112,7 +119,7 @@ def cal_heat(df,
     p.axis.major_tick_line_color = None
     p.axis[1].major_label_text_font_size = label_font_size
     p.axis.major_label_standoff = 0
-    p.xaxis.major_label_orientation = pi / 3
+    p.xaxis.major_label_orientation = pi / 3 if xlabel_orientation is None else xlabel_orientation
 
     source = ColumnDataSource(df)
     p.rect(x=xcolumn,
@@ -130,10 +137,10 @@ def cal_heat(df,
                          major_label_text_font_size=label_font_size,
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          formatter=PrintfTickFormatter(format=colorbar_format),
-                         label_standoff=20,
+                         label_standoff=colorbar_label_standoff,
                          border_line_color=None,
-                         location=(0, 0))
-    p.add_layout(color_bar, 'right')
+                         location=(0, 0) if colorbar_location is None else colorbar_location)
+    p.add_layout(color_bar, colorbar_place)
 
     save(p)
     return p
