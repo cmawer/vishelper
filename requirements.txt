@@ -5,3 +5,4 @@ pandas~=1.0.3
 numpy~=1.17.2
 folium~=0.9.1
 selenium~=3.141.0  # if you want to save folium maps to png
+bokeh~=2.2.3
