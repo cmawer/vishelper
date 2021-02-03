@@ -21,15 +21,18 @@ def interactive_heatmap(df,
              title="",
              plot_width=900,
              plot_height=500,
+             min_border_right=0,
              colorbar_format="%d lbs",
              x_axis_location="above",
+             y_axis_location='left',
              toolbar_location='below',
+             colorbar_orientation='vertical',
+             colorbar_place='right',
              tooltips=None,
              label_font_size="10pt",
              xlabel_orientation=None,
              colorbar_label_standoff=20,
-             colorbar_location=None,
-             colorbar_place='right',
+             colorbar_major_label_text_align='center',
              xlabel="",
              ylabel=""):
     """Creates an interactive heatmap with tooltips
@@ -54,16 +57,22 @@ def interactive_heatmap(df,
         title:
         plot_width:
         plot_height:
+        min_border_right (int): Minimum border left between right side of image and border of figure. Default 0. It is
+            recommended to change to ~80 when setting colorbar_orientation to horizontal to allow room for x-axis
+            labels which are oriented pi/3
         colorbar_format:
-        x_axis_location:
+        x_axis_location: which side to put the x-axis (column) labels. Default: 'above'. Options: 'above', 'below'
+        y_axis_location: which side to put the y-axis (row) labels. Default: 'left'. Options: 'left', 'right'
+        colorbar_orientation (str): How to orient the colorbar, 'vertical' or 'horizontal'. Default: 'vertical'
+        colorbar_place (str, optional) : where to add the colorbar (default: 'right')
+                Valid places are: 'left', 'right', 'above', 'below', 'center'.
         toolbar_location:
         tooltips:
         label_font_size:
         xlabel_orientation (float): Orientation of labels on x-axis. If left as None, default is pi/3
-        colorbar_label_standoff (int): How much space to leave between colorbar and colorbar labels. Default 20
-        colorbar_location (tuple): Location for placing the colorbar. If left as None, default is (0,0).
-        colorbar_place (str, optional) : where to add the colorbar (default: 'right')
-                Valid places are: 'left', 'right', 'above', 'below', 'center'.
+        colorbar_label_standoff (int): How much space to leave between colorbar and colorbar labels. Default 20. It is
+            recommended to set to ~5 for vertical color bars.
+        colorbar_major_label_text_align (`str`): How to align tick labels to ticks. Default 'center'.
         xlabel (str): Label for x-axis. Default=""
         ylabel (str): Label for y-axis. Default=""
 
@@ -97,11 +106,13 @@ def interactive_heatmap(df,
             y_axis_label=ylabel,
             y_range=list(reversed(y_range)),
             x_axis_location=x_axis_location,
+            y_axis_location=y_axis_location,
             plot_width=plot_width,
             plot_height=plot_height,
             tools=bokehtools,
             toolbar_location=toolbar_location,
             tooltips=tooltips,
+            min_border_right=min_border_right
         )
     else:
         p = figure(
@@ -109,6 +120,7 @@ def interactive_heatmap(df,
         x_range=x_range,
         y_range=list(reversed(y_range)),
         x_axis_location=x_axis_location,
+        y_axis_location=y_axis_location,
         plot_width=plot_width,
         plot_height=plot_height,
         tools=bokehtools,
@@ -138,8 +150,10 @@ def interactive_heatmap(df,
                          ticker=BasicTicker(desired_num_ticks=len(colors)),
                          formatter=PrintfTickFormatter(format=colorbar_format),
                          label_standoff=colorbar_label_standoff,
+                         orientation=colorbar_orientation,
+                         major_label_text_align=colorbar_major_label_text_align,
                          border_line_color=None,
-                         location=(0, 0) if colorbar_location is None else colorbar_location)
+                         location=(0, 0))  # color_bar must be placed at (0,0) so not configurable
     p.add_layout(color_bar, colorbar_place)
 
     save(p)
