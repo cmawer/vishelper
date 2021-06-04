@@ -1,15 +1,14 @@
-import folium
 import json
-import vishelper as vh
-import ipywidgets as widgets
-import os
 import logging
-import matplotlib as mpl
+import os
+import time
+
+import folium
+import ipywidgets as widgets
 import numpy as np
 import requests
-from selenium import webdriver
-import time
-import logging
+
+import vishelper as vh
 
 logger = logging.getLogger(__name__)
 to_geo_dir = lambda x: os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "data/")), x)
@@ -28,10 +27,10 @@ geoformatting = {"zoom_start": 4,
                  "fill_color_single": vh.formatting["darks"][0],
                  "fill_opacity": 1,
                  "line_opacity": 1,
-                 "opacity":1,
-                 "radius":15000,
+                 "opacity": 1,
+                 "radius": 15000,
                  "colors": vh.formatting["darks"],
-                 "tiles":"CartoDB positron"}
+                 "tiles": "CartoDB positron"}
 
 
 def to_state_name(df, state_column, new_column):
@@ -49,7 +48,9 @@ def to_state_name(df, state_column, new_column):
     df[new_column] = df[state_column].apply(lambda x: x if x not in state_map else state_map[x])
     non_states = list(set(df[state_column].unique()) - set(state_map.keys()))
     if len(non_states) > 0:
-        logging.warning("The following values were not state names and were kept the same in the new column: %s" % ", ".join(non_states))
+        logging.warning(
+            "The following values were not state names and were kept the same in the new column: %s" % ", ".join(
+                [str(s) for s in non_states]))
     return df
 
 
@@ -72,16 +73,28 @@ def basic_map(**kwargs):
     return fmap
 
 
-def filter_geojson(geojson_dict, geo_values, geo_property='ZCTA5CE10'):
-
+def filter_geojson(geojson_dict, df, geo_col, geojson_key='ZCTA5CE10', filter_geos=True):
     # We want to only include features that are in our dataset so we clear the features key and rebuild it.
     filtered_geojson_dict = geojson_dict.copy()
     filtered_geojson_dict['features'] = []
+    geo_values = df[geo_col].unique()
+    included_geos = []
 
     for feat in geojson_dict['features']:
-        if feat['properties'][geo_property] in geo_values:
+        geojson_val = feat['properties'][geojson_key]
+        if (filter_geos and geojson_val in geo_values) or not filter_geos:
             filtered_geojson_dict['features'].append(feat)
-    return filtered_geojson_dict
+            included_geos.append(geojson_val)
+
+    filtered_df = df[df[geo_col].isin(included_geos)]
+    not_included_geos = df[~df[geo_col].isin(included_geos)][geo_col].unique()
+    if len(not_included_geos) > 0:
+        if len(not_included_geos) > 20:
+            logger.warning('Over 20 geos were not in the provided geojson and will not be plotted.')
+        else:
+            logger.warning("The following geos were not in the provided geojson and will not be plotted: %s",
+                           ','.join(not_included_geos))
+    return filtered_geojson_dict, filtered_df
 
 
 def read_geojson(geo_data):
@@ -97,7 +110,7 @@ def read_geojson(geo_data):
 
 
 def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_data=None, key_on=None,
-             legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, **kwargs):
+             legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, threshold_scale=None, **kwargs):
     """Creates a choropleth map based on a dataframe. Colors regions in a map based on provided data.
 
     Must provide geo_type *or* geo_data and key_on.
@@ -134,6 +147,10 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
         filter_geos (`bool`): If True,  will filter out all geoJSON entries for regions not
             included in the dataframe, `df`. This is typically necessary as folium generally
             won't plot anything if there isn't a match for each region.
+        threshold_scale (list): List of thresholds for coloring the data. The list must have more than three values,
+            each item must be larger in value than the last. All data must have values between the first and
+            last items of the list. Example: [100, 200, 300, 400] In this case, all data in df[color_column] must
+            be between 100 and 400.
         **kwargs:
             location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.
             zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting
@@ -154,6 +171,7 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
     else:
         assert color_column in df.columns, 'color_column must be provided to indicate which column to use in coloring'
         assert geo_column in df.columns, 'geo_column must be provided to indicate which column contains geographic key'
+        assert len(df) > 0, 'Dataframe, df, must have at least one row of data to plot'
 
         fill_color = geoformatting['fill_color'] if fill_color is None else fill_color
 
@@ -174,11 +192,13 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
 
     geojson_dict = read_geojson(geo_data)
 
-    if df is not None and filter_geos:
+    if df is not None:
         n_geos_original = len(geojson_dict['features'])
         json_key = key_on.split('.')[-1]
-        geojson_dict = filter_geojson(geojson_dict, df[geo_column].values, json_key)
+        geojson_dict, filtered_df = filter_geojson(geojson_dict, df.copy(), geo_column, json_key, filter_geos)
         logger.info('geo_data reduced to %i regions from %i', len(geojson_dict['features']), n_geos_original)
+        if len(filtered_df) == 0:
+            raise ValueError('No rows in the dataframe were found in the geoJSON so there is nothing to plot.')
 
     if fmap is None:
         fmap = basic_map(**kwargs)
@@ -186,6 +206,7 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
     folium.Choropleth(
         geo_data=geojson_dict,
         data=df,
+        threshold_scale=threshold_scale,
         columns=[geo_column, color_column],
         key_on=key_on,
         reset=reset,
@@ -205,10 +226,9 @@ def plot_subset(plot_function, df, option, option_column, **kwargs):
 
 def slider_interact(plot_function, df, options, option_column, initial_option=None, option_label=None,
                     disabled=False, button_style='', **kwargs):
-
     if option_label is None:
         option_label = vh.labelfy(option_column)
-        
+
     option_slider = widgets.SelectionSlider(options=options,
                                             value=options[0] if initial_option is None else initial_option,
                                             description=option_label,
@@ -240,7 +260,6 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
     assert len(color) == len(latlons)
 
     for latlon, col in zip(latlons, color):
-
         folium.Circle(location=latlon, radius=getfmt("radius"),
                       fill=fill, color=col, fill_color=col).add_to(fmap)
     if lines:
@@ -254,10 +273,10 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
     return fmap
 
 
-def add_df_latlon(df, lat_col="lat", lng_col="lng",  radius_col=None, radius=15000,
+def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=15000,
                   color_col=None, raw_color_col='color', color_how=None, colors=None,
                   fill=True, fill_opacity=1, color_continuous_kwargs=None,
-                  popup_col=None,  max_popup_width=2650, fmap=None, **kwargs):
+                  popup_col=None, max_popup_width=2650, fmap=None, **kwargs):
     """Add points to a map from data in a dataframe. Can color and size points based on data columns.
 
     Args:
@@ -292,15 +311,21 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng",  radius_col=None, radius=150
     """
     getfmt = lambda x: geoformatting[x] if x not in kwargs else kwargs[x]
 
-    if color_col is not None:
+    if raw_color_col is not None and raw_color_col in df.columns:
+        logger.debug('Using raw color in %s column', raw_color_col)
+        if color_col is not None:
+            logger.warning('%s column already in dataframe so %s column will not be used. Change `raw_color_col` '
+                           'if you want a new color mapping to be created.', raw_color_col, color_col)
+    elif color_col is not None:
         if color_how == "categorical":
             df = vh.color_categorical(df, color_col, new_color_column=raw_color_col, colors=colors)
         elif color_how == "continuous":
             color_continuous_kwargs = {} if color_continuous_kwargs is None else color_continuous_kwargs
-            df = vh.color_continuous(df, color_col, new_color_column="color", **color_continuous_kwargs)
+            df = vh.color_continuous(df, color_col, new_color_column=raw_color_col, **color_continuous_kwargs)
         else:
             raise ValueError("Must specify color_how as 'categorical' or 'continuous' or change color_col to None")
     else:
+        raw_color_col = None
         if colors is None:
             color = vh.formatting["darks"][0]
         elif type(colors) == list:
@@ -312,13 +337,13 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng",  radius_col=None, radius=150
         fmap = folium.Map(location=getfmt("location_start"), zoom_start=getfmt("zoom_start"), tiles=getfmt('tiles'))
     if type(radius) != list:
         radius = [radius] * len(df)
+
     for i, j in enumerate(df.index):
 
         r = df.loc[j, radius_col] if radius_col is not None else radius[i]
-        color = color if color_col is None and raw_color_col is None else df.loc[j, raw_color_col]
+        color = color if raw_color_col is None else df.loc[j, raw_color_col]
         if popup_col is not None:
             popup = df.loc[j, popup_col]
-            # iframe = folium.element.IFrame(html=popup, width=500, height=300)
             popup = folium.Popup(popup, max_width=max_popup_width)
         else:
             popup = None
@@ -352,6 +377,7 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
     tmpurl = 'file://{htmlpath}'.format(htmlpath=htmlpath)
 
     if browser is None:
+        from selenium import webdriver
         browser = webdriver.Safari()
 
     browser.set_window_size(width, width * ratio)
@@ -364,8 +390,7 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
     browser.quit()
 
 
-def save_map(fmap, htmlpath=None, pngpath=None, png=True, delay=5, width=2560, ratio=0.5625, browser=None):
-
+def save_map(fmap, htmlpath=None, pngpath=None, png=False, delay=5, width=2560, ratio=0.5625, browser=None):
     if htmlpath is None and pngpath is None:
         raise ValueError("Must give at least htmlpath or pngpath")
     elif htmlpath is None:
@@ -377,4 +402,4 @@ def save_map(fmap, htmlpath=None, pngpath=None, png=True, delay=5, width=2560, r
 
     if png:
         html_to_png(htmlpath=os.path.abspath(htmlpath), pngpath=pngpath, delay=delay,
-                    width=width, ratio=ratio, browser=None)
+                    width=width, ratio=ratio, browser=browser)

@@ -451,7 +451,7 @@ class VisDF:
         if transpose:
             comp_df = comp_df.T
 
-        fig, ax = vh.heatmap(comp_df, xlabel=xlabel, ylabel=ylabel,
+        fig, ax = vh.plot(df=comp_df, kind='heatmap', xlabel=xlabel, ylabel=ylabel,
                              xticklabels=feature_labels if transpose else category_labels,
                              yticklabels=category_labels if transpose else feature_labels,
                              **kwargs)
@@ -493,7 +493,7 @@ class VisDF:
         if 'title' not in kwargs.keys():
             kwargs['title'] = metric.capitalize()
 
-        fig, ax = vh.heatmap(comp_df, xlabel=xlabel, ylabel=ylabel, log10=log10,
+        fig, ax = vh.plot(df=comp_df, kind='heatmap', xlabel=xlabel, ylabel=ylabel, log10=log10,
                              xticklabels=category_labels if transpose else feature_labels,
                              yticklabels=feature_labels if transpose else category_labels,
                              **kwargs)
