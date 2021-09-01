@@ -110,7 +110,8 @@ def read_geojson(geo_data):
 
 
 def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_data=None, key_on=None,
-             legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, threshold_scale=None, **kwargs):
+             legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, threshold_scale=None,
+             **kwargs):
     """Creates a choropleth map based on a dataframe. Colors regions in a map based on provided data.
 
     Must provide geo_type *or* geo_data and key_on.
@@ -275,6 +276,7 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
 
 def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=15000,
                   color_col=None, raw_color_col='color', color_how=None, colors=None,
+                  outline_color=None, raw_outline_color_col=None, weight=1,
                   fill=True, fill_opacity=1, color_continuous_kwargs=None,
                   popup_col=None, max_popup_width=2650, fmap=None, **kwargs):
     """Add points to a map from data in a dataframe. Can color and size points based on data columns.
@@ -295,9 +297,11 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=1500
             * None: The color provided in `colors` will be used for all points. If colors contains a list, the first
                 color in the list will be used.
             * Raw: The color in `raw_color_col` will be used as the color for each point.
-            * Continuous: Points will be colored based on a colormap and the values of data in the `color_col`
+            * Continuous: Points will be colored based on a colormap and the values of data in the `color_col
         colors (`str` or `list`): If `color_col` and `raw_color_col` are None, value or first value of list are used
             to color each point. If `color_col` is not None and `color_how` = 'categorical', list of colors is used.
+        outline_color (`str`) If None, same as fill color specified by colors or color_how
+        raw_outline_color_col (`str`): name of column containing raw color name for the outline of each point.
         fill (bool): If True, circles will be filled in with color. Default True.
         fill_opacity (float): Opacity of area fill, range 0-1.
         color_continuous_kwargs:
@@ -342,6 +346,8 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=1500
 
         r = df.loc[j, radius_col] if radius_col is not None else radius[i]
         color = color if raw_color_col is None else df.loc[j, raw_color_col]
+        outline_color = color if outline_color is None else outline_color
+        outline_color = outline_color if raw_outline_color_col is None else df.loc[j, raw_outline_color_col]
         if popup_col is not None:
             popup = df.loc[j, popup_col]
             popup = folium.Popup(popup, max_width=max_popup_width)
@@ -349,8 +355,9 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=1500
             popup = None
         lat, lon = df.loc[j, lat_col], df.loc[j, lng_col]
 
-        folium.Circle(location=(lat, lon), radius=r, popup=popup,
-                      fill=fill, color=color, fill_color=color, fill_opacity=fill_opacity, **kwargs).add_to(fmap)
+        folium.Circle(location=(lat, lon), radius=r, popup=popup, weight=weight,
+                      fill=fill, color=outline_color,  fill_color=color,
+                      fill_opacity=fill_opacity, **kwargs).add_to(fmap)
 
     return fmap
 
