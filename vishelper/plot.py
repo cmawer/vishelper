@@ -14,9 +14,12 @@ formatting = {'font.size': 16,
               'tick.size': 10,
               'markersize': 48,
               'figure.figsize': [12.0, 8.0],
-              'darks': ['#0067a0', '#53565a', '#009681','#87189d', '#c964cf'],
+              'darks': ['#0067a0', '#53565a', '#009681', '#87189d', '#c964cf'],
               'mediums': ['#0085ca', '#888b8d', '#00c389', '#f4364c', '#e56db1'],
               'lights': ['#00aec7', '#b1b3b3', '#2cd5c4', '#ff671f', '#ff9e1b'],
+              'dark-med-lights': ['#0067a0', '#53565a', '#009681', '#87189d', '#c964cf', '#0085ca', '#888b8d',
+                                  '#00c389', '#f4364c', '#e56db1', '#00aec7', '#b1b3b3', '#2cd5c4', '#ff671f',
+                                  '#ff9e1b'],
               'greens': ['#43b02a', '#78be20', '#97d700'],
               'axes.labelsize': 16,
               'axes.labelcolor': '#53565a',
@@ -56,7 +59,7 @@ def color_continuous(df, column_to_color, new_color_column="color", clip=True, l
 
     if log10:
         df[new_color_column] = df[column_to_color].apply(
-            lambda x: "#%02x%02x%02x" % tuple(int(255*n) for n in mapper.to_rgba(np.log10(x))[:-1]))
+            lambda x: "#%02x%02x%02x" % tuple(int(255 * n) for n in mapper.to_rgba(np.log10(x))[:-1]))
     else:
         df[new_color_column] = df[column_to_color].apply(
             lambda x: "#%02x%02x%02x" % tuple(int(255 * n) for n in mapper.to_rgba(x)[:-1]))
@@ -229,7 +232,7 @@ def fake_legend(ax, legend_labels, colors, marker=None, size=None, fontsize=None
     else:
         location = {}
         if loc is not None:
-            location["loc"] =loc
+            location["loc"] = loc
         if bbox_to_anchor is not None:
             location["bbox_to_anchor"] = bbox_to_anchor
 
@@ -334,7 +337,57 @@ def line(x, y, ax=None, color=None, **kwargs):
     else:
         alpha = kwargs.pop('alpha')
 
-    ax.plot(x, y, color=color, linestyle=linestyle, alpha=alpha, marker=marker, markersize=markersize, linewidth=linewidth, **kwargs)
+    ax.plot(x, y, color=color, linestyle=linestyle, alpha=alpha, marker=marker, markersize=markersize,
+            linewidth=linewidth, **kwargs)
+
+    if fig is None:
+        return ax
+    else:
+        return fig, ax
+
+
+def bar(x, y, ax=None, color=None, label=None, stacked=False, **kwargs):
+
+    y = listify(y, order=2)
+    onex = range(len(y[0]))
+
+    if not ax:
+        fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
+    else:
+        fig = None
+
+    if not color and not stacked:
+        color = formatting['darks'][0]
+    elif not color and stacked:
+        if len(y) > len(formatting['dark-med-lights']):
+            raise ValueError("Not enough colors in default vh.formatting['dark-med-lights'], "
+                             "please provide `color` or reduce number of categories")
+        else:
+            color = formatting['dark-med-lights'][:len(y)]
+
+    if 'alpha' not in kwargs.keys():
+        alpha = formatting['alpha.single']
+    else:
+        alpha = kwargs['alpha']
+
+    bottom = np.zeros(len(onex))  # Assuming len(x) same for all x
+    for j, oney in enumerate(y):
+        lab = None if label is None else label[j]
+        col = color if isinstance(color, str) else color[j]
+        ax.bar(
+            onex,
+            oney,
+            bottom=bottom,
+            color=col,
+            alpha=alpha,
+            label=lab,
+            **kwargs);
+        bottom = bottom + np.array(oney)
+
+    ax.set_xticks(range(len(oney)))
+    ax.set_xticklabels(x, size=formatting['tick.labelsize'])
+
+    ax.set_xlim([-1, len(oney)]);
 
     if fig is None:
         return ax
@@ -367,8 +420,6 @@ def barh(x, y, ax=None, color=None, label=None, **kwargs):
     else:
         return fig, ax
 
-    return fig, ax
-
 
 def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
     """Plots a histogram based on values of `x`"""
@@ -378,7 +429,7 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
             x = [xi for xi in x if not np.isnan(xi)]
             final_len = len(x)
             if final_len != original_len:
-                diff = original_len-final_len
+                diff = original_len - final_len
                 logging.warning("A total of %i NaN values out of %i observations were removed" % (diff, original_len))
         else:
             x_to_process = x
@@ -390,7 +441,8 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
                 final_len = len(subx)
                 if final_len != original_len:
                     diff = original_len - final_len
-                    logging.warning("A total of %i NaN values out of %i observations were removed from set %i" % (diff, original_len, j))
+                    logging.warning("A total of %i NaN values out of %i observations were removed from set %i" % (
+                    diff, original_len, j))
     if not ax:
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'])
     else:
@@ -410,7 +462,7 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
     if color is None:
         color = formatting['darks'][0]
     if "stacked" in kwargs and kwargs["stacked"]:
-        if len(color)!=len(x):
+        if len(color) != len(x):
             color = formatting['darks'][:len(x)]
         # if "stackedlabels" in kwargs:
         #     kwargs["label"] = kwargs.pop("stackedlabels")
@@ -442,11 +494,12 @@ def heatmap(df, ax=None,
     xticklabels = df.columns.tolist() if xticklabels is None else xticklabels
 
     if log10:
-
-        log_norm = LogNorm(vmin=df.replace(0, 1).min(skipna=True).min(skipna=True), vmax=df.replace(0, 1).max(skipna=True).max(skipna=True))
+        log_norm = LogNorm(vmin=df.replace(0, 1).min(skipna=True).min(skipna=True),
+                           vmax=df.replace(0, 1).max(skipna=True).max(skipna=True))
 
         cbar_ticks = [np.float_power(10, i) for i in
-                      range(int(np.floor(np.log10(df.replace(0, 1).min(skipna=True).min(skipna=True)))), 1 + int(np.ceil(np.log10(df.replace(0, 1).max(skipna=True).max(skipna=True)))))]
+                      range(int(np.floor(np.log10(df.replace(0, 1).min(skipna=True).min(skipna=True)))),
+                            1 + int(np.ceil(np.log10(df.replace(0, 1).max(skipna=True).max(skipna=True)))))]
         kwargs["cbar_kws"] = {"ticks": cbar_ticks}
         kwargs["norm"] = log_norm
 
@@ -478,7 +531,7 @@ def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, col
     if "label" in kwargs:
         kwargs.pop("label")
 
-    if data is not None and type(x)==list:
+    if data is not None and type(x) == list:
         x = x[0]
         y = y[0]
     ax = sns.boxplot(x=x, y=y, data=data, palette=palette, hue=hue, ax=ax, **kwargs)
@@ -503,7 +556,7 @@ def boxplot(x, y, ax=None, palette="Set3", data=None, hue=None, white=False, col
         return fig, ax
 
 
-def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
+def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, stacked=False, **kwargs):
     if y is not None:
         y = listify(y, order=2)
         x = listify(x, order=2, multiplier=np.shape(y)[0])
@@ -514,33 +567,39 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, **kwargs):
         logger.debug(y)
         x = [df[x] for xi in x]
         y = [df[y] for yi in y]
-    for j, onex in enumerate(x):
-
-        if labels is None:
-            label = 'Set ' + str(j)
-        else:
-            label = labels[j]
-        if y is None:
-            ax = plot_function(onex, ax=ax,
-                               color=plot_color[j],
-                               label=label, **kwargs)
-        else:
-            ax = plot_function(onex, y=y[j], ax=ax,
-                               color=plot_color[j],
-                               label=label, **kwargs)
-    if j > 0:
+    if stacked:
+        ax = plot_function(x, y, ax=ax,
+                           color=plot_color,
+                           label=labels, **kwargs)
         plot_legend = True
     else:
-        plot_legend = False
+        for j, onex in enumerate(x):
+
+            if labels is None:
+                label = 'Set ' + str(j)
+            else:
+                label = labels[j]
+            if y is None:
+                ax = plot_function(onex, ax=ax,
+                                   color=plot_color[j],
+                                   label=label, **kwargs)
+            else:
+                ax = plot_function(onex, y=y[j], ax=ax,
+                                   color=plot_color[j],
+                                   label=label, **kwargs)
+        if j > 0:
+            plot_legend = True
+        else:
+            plot_legend = False
     return ax, plot_legend
 
 
-plot_functions = dict(hist=hist, scatter=scatter, barh=barh, line=line, boxplot=boxplot, heatmap=heatmap)
+plot_functions = dict(hist=hist, scatter=scatter, barh=barh, bar=bar, line=line, boxplot=boxplot, heatmap=heatmap)
 
 
 def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
          xlabel=None, ylabel=None, title=None, legend=None, legend_kwargs=None, ticks=None,
-         labels=None, color=None,  color_data=None, figsize=None, xlim=None, ylim=None, **kwargs):
+         labels=None, color=None, color_data=None, figsize=None, xlim=None, ylim=None, **kwargs):
     """
 
     Args:
@@ -591,8 +650,6 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
         ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`): Axes object with the plot(s)
 
     """
-
-
 
     if ax is None:
         fig, ax = plt.subplots(figsize=formatting['figure.figsize'] if figsize is None else figsize)
