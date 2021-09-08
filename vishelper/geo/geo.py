@@ -9,6 +9,7 @@ import numpy as np
 import requests
 
 import vishelper as vh
+import vishelper.config as config
 
 logger = logging.getLogger(__name__)
 to_geo_dir = lambda x: os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "data/")), x)
@@ -24,12 +25,12 @@ with open(to_geo_dir("state-abbs.json"), 'r') as f:
 geoformatting = {"zoom_start": 4,
                  "location_start": [38, -96.5],
                  "fill_color": 'GnBu',
-                 "fill_color_single": vh.formatting["darks"][0],
+                 "fill_color_single":config.formatting["color.single"],
                  "fill_opacity": 1,
                  "line_opacity": 1,
                  "opacity": 1,
                  "radius": 15000,
-                 "colors": vh.formatting["darks"],
+                 "colors":config.formatting["color.darks"],
                  "tiles": "CartoDB positron"}
 
 
@@ -253,7 +254,7 @@ def add_latlons(latlons, color=None, fmap=None, fill=True, lines=False, line_col
 
     assert np.shape(latlons)[1] == 2
 
-    color = vh.formatting["darks"][0] if color is None else color
+    color =config.formatting["color.single"] if color is None else color
 
     if type(color) != list:
         color = [color] * len(latlons)
@@ -331,7 +332,7 @@ def add_df_latlon(df, lat_col="lat", lng_col="lng", radius_col=None, radius=1500
     else:
         raw_color_col = None
         if colors is None:
-            color = vh.formatting["darks"][0]
+            color =config.formatting["color.single"]
         elif type(colors) == list:
             color = colors[0]
         else:
