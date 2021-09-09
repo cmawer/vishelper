@@ -1,6 +1,4 @@
-#!/usr/bin/env python
 import logging
-import vishelper as vh
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -8,6 +6,11 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import scipy
 import matplotlib.cm as cm
+
+import vishelper.reformat as reformat
+import vishelper.config as config
+import vishelper.plot as plot
+import vishelper.helpers as helpers
 
 
 class VisDF:
@@ -66,10 +69,10 @@ class VisDF:
 
         self.df = df
         if colors is None:
-            colors = vh.formatting['darks']
+            colors = config.formatting['color.darks']
 
         if column_labels is None:
-            column_labels = dict(zip(df.columns, vh.labelfy(df.columns)))
+            column_labels = dict(zip(df.columns, reformat.labelfy(df.columns)))
 
         self.column_labels = column_labels
 
@@ -95,7 +98,8 @@ class VisDF:
             self.nonnumeric_columns = list(set(self.nonnumeric_columns + nonnumeric_columns))
         if numeric_columns is None:
             self.numeric_columns = [col for col in list(df.select_dtypes(
-                include=[np.number]).columns.values) if ((col != self.index) and (col != self.cluster_label) and (col not in self.nonnumeric_columns))]
+                include=[np.number]).columns.values) if ((col != self.index) and (col != self.cluster_label) and (
+                    col not in self.nonnumeric_columns))]
         else:
             self.numeric_columns = numeric_columns
 
@@ -141,7 +145,8 @@ class VisDF:
 
         """
 
-        labels = [self.column_labels[col] if col in self.column_labels.keys() else vh.labelfy(col) for col in columns]
+        labels = [self.column_labels[col] if col in self.column_labels.keys() else reformat.labelfy(col) for col in
+                  columns]
 
         return labels
 
@@ -156,7 +161,7 @@ class VisDF:
         Returns: Nothing
 
         """
-        colors = vh.formatting["darks"] if colors is None else colors
+        colors = config.formatting["darks"] if colors is None else colors
 
         categories = self.df[column_name].unique()
 
@@ -292,37 +297,31 @@ class VisDF:
                     x = x[-min_counts:]
                     y = y[-min_counts:]
 
-                ax = vh.plot(x, y, ax=axes_list[j],
-                             kind='barh',
-                             **kwargs)
-                ax = vh.add_labels(ylabel=self.column_labels[cols],
-                                   xlabel=self.univariate_ylabels['barh'],
-                                   title=None if titles is None else
-                                   titles[j],
-                                   ax=ax)
+                ax = plot(x, y, ax=axes_list[j], kind='barh', **kwargs)
+                ax = reformat.add_labels(ylabel=self.column_labels[cols],
+                                         xlabel=self.univariate_ylabels['barh'],
+                                         title=None if titles is None else
+                                         titles[j],
+                                         ax=ax)
                 # TO DO: add in color based on color_dict, add multi-line plotting...
             elif isinstance(cols, list) and len(cols) > 1:
 
-                ax = vh.plot(df_to_plot[cols[0]], df_to_plot[cols[1]], ax=ax,
-                             kind=kind_j,
-                             **kwargs)
-                ax = vh.add_labels(xlabel=self.column_labels[cols[0 if kind_j != 'barh' else 1]],
-                                   ylabel=self.column_labels[cols[1 if kind_j != 'barh' else 0]],
-                                   title=None if titles is None else
-                                   titles[j],
-                                   ax=ax)
+                ax = plot(df_to_plot[cols[0]], df_to_plot[cols[1]], ax=ax, kind=kind_j, **kwargs)
+                ax = reformat.add_labels(xlabel=self.column_labels[cols[0 if kind_j != 'barh' else 1]],
+                                         ylabel=self.column_labels[cols[1 if kind_j != 'barh' else 0]],
+                                         title=None if titles is None else
+                                         titles[j],
+                                         ax=ax)
             else:
                 cols = cols[0] if isinstance(cols, list) else cols
-                ax = vh.plot(df_to_plot[cols], ax=ax,
-                             kind=kind_j,
-                             **kwargs)
-                ax = vh.add_labels(xlabel=self.column_labels[cols],
-                                   ylabel=self.univariate_ylabels[kind_j],
-                                   title=None if titles is None else
-                                   titles[j],
-                                   ax=ax)
+                ax = plot(df_to_plot[cols], ax=ax, kind=kind_j, **kwargs)
+                ax = reformat.add_labels(xlabel=self.column_labels[cols],
+                                         ylabel=self.univariate_ylabels[kind_j],
+                                         title=None if titles is None else
+                                         titles[j],
+                                         ax=ax)
 
-            ax = vh.adjust_lims(ax, xlimi, ylimi)
+            ax = reformat.adjust_lims(ax, xlimi, ylimi)
 
         if color_by is not None:
 
@@ -335,32 +334,17 @@ class VisDF:
             if legend_labels is not None:
                 labels = [legend_labels[l] for l in labels]
 
-            ax = vh.fake_legend(ax, labels, colors)
-        # TO DO: Add in functionality to pass dictionaries for each figure
-        # instead of columns_to_plot
-        # for j, (ax, plot_dict) in enumerate(zip(axes_list, plot_dicts)):
-        #                 if 'kind' in plot_dict.keys():
-        #                     k = plot_dict.pop('kind')
-        #                 elif isinstance(kind, str):
-        #                     k = kind
-        #                 else:
-        #                     k = kind[j]
-
-        #                 if 'y' is in plot_dict.keys():
-        #                     ax = vh.plot([df[onex] for onex in plot_dict[x]],
-        #                                  y=[df[oney] for oney in plot_dict[y]],
-        #                                  kind=k, ax=ax)
-
-        sup_x = vh.formatting['suptitle.x'] \
+            ax = reformat.fake_legend(ax, labels, colors)
+        sup_x = config.formatting['suptitle.x'] \
             if 'sup_x' not in kwargs.keys() \
             else kwargs.pop('sup_x')
-        sup_y = vh.formatting['suptitle.y'] \
+        sup_y = config.formatting['suptitle.y'] \
             if 'sup_y' not in kwargs.keys() \
             else kwargs.pop('sup_y')
 
         if main_title:
             plt.suptitle(main_title, x=sup_x, y=sup_y,
-                         size=vh.formatting['suptitle.size'])
+                         size=config.formatting['suptitle.size'])
         fig.tight_layout()
         return fig, axes
 
@@ -427,7 +411,7 @@ class VisDF:
         if exclude is None:
             exclude = [category]
         else:
-            exclude = vh.listify(exclude).append(category)
+            exclude = helpers.listify(exclude).append(category)
         # define the threshold
         threshold = self.df.quantile(q=quantile_threshold)
         # compute the
@@ -451,11 +435,11 @@ class VisDF:
         if transpose:
             comp_df = comp_df.T
 
-        fig, ax = vh.plot(df=comp_df, kind='heatmap', xlabel=xlabel, ylabel=ylabel,
-                             xticklabels=feature_labels if transpose else category_labels,
-                             yticklabels=category_labels if transpose else feature_labels,
-                             **kwargs)
-        ax = vh.add_labels(ax, xlabel=xlabel, ylabel=ylabel)
+        fig, ax = plot(df=comp_df, kind='heatmap', xlabel=xlabel, ylabel=ylabel,
+                       xticklabels=feature_labels if transpose else category_labels,
+                       yticklabels=category_labels if transpose else feature_labels,
+                       **kwargs)
+        ax = reformat.add_labels(ax, xlabel=xlabel, ylabel=ylabel)
 
         return fig, ax
 
@@ -493,12 +477,12 @@ class VisDF:
         if 'title' not in kwargs.keys():
             kwargs['title'] = metric.capitalize()
 
-        fig, ax = vh.plot(df=comp_df, kind='heatmap', xlabel=xlabel, ylabel=ylabel, log10=log10,
-                             xticklabels=category_labels if transpose else feature_labels,
-                             yticklabels=feature_labels if transpose else category_labels,
-                             **kwargs)
+        fig, ax = plot(df=comp_df, kind='heatmap', xlabel=xlabel, ylabel=ylabel, log10=log10,
+                       xticklabels=category_labels if transpose else feature_labels,
+                       yticklabels=feature_labels if transpose else category_labels,
+                       **kwargs)
 
-        ax = vh.add_labels(ax, xlabel=xlabel, ylabel=ylabel)
+        ax = reformat.add_labels(ax, xlabel=xlabel, ylabel=ylabel)
         return fig, ax
 
     def labeled_scatter(self, category=None, x=None, y=None, pca=True, **kwargs):
@@ -514,14 +498,13 @@ class VisDF:
             plot_df = self.df.copy()
 
         n_clusters = self.df[category].nunique()
-        if n_clusters <= len(vh.formatting['darks']):
-            color_dict = dict(zip(self.df[category].unique(), vh.formatting['darks'][:n_clusters]))
+        if n_clusters <= len(config.formatting['color.darks']):
+            color_dict = dict(zip(self.df[category].unique(), config.formatting['color.darks'][:n_clusters]))
             colors = [color_dict[label] for label in self.df[category].values]
         else:
             colors = cm.spectral(self.df[category].astype(float) / n_clusters)
 
-        fig, ax = vh.plot(plot_df.loc[:, x], plot_df.loc[:, y],
-                          kind='scatter', color=colors, **kwargs)
+        fig, ax = plot(plot_df.loc[:, x], plot_df.loc[:, y], kind='scatter', color=colors, **kwargs)
         # determine the cluster centers
         centers = np.zeros((n_clusters, 2))
         for i, label in enumerate(plot_df[category].unique()):
@@ -533,38 +516,11 @@ class VisDF:
             ax.scatter(c[0], c[1], marker='$%d$' % i, alpha=1, s=200, c='r')
         return fig, ax
 
-    # def boxplot(self, variable, category, grid=False, xlim=None, ylim=None, **kwargs):
-    #     figsize = vh.formatting["figure.figsize"] if "figsize" not in kwargs else kwargs.pop("figsize")
-    #     fig, ax = plt.subplots(figsize=figsize)
-    #     subset = [variable] if type(variable) == str else variable
-    #     subset += [category]
-    #     # ax = self.df[subset].boxplot(by=category, ax=ax, grid=grid)
-    #
-    #     ylabel = category if category not in self.column_labels else self.column_labels[category]
-    #     if type(ax) == np.ndarray:
-    #         axes_list = ax.ravel()
-    #         xlim = vh.listify(xlim, order=2 if xlim is not None else 1, multiplier=np.shape(variable)[0])
-    #         ylim = vh.listify(ylim, order=2 if ylim is not None else 1, multiplier=np.shape(variable)[0])
-    #
-    #         for j, a in enumerate(axes_list):
-    #             xlabel = variable[j] if variable[j] not in self.column_labels else self.column_labels[variable[j]]
-    #             ax = self.df[[variable, category]].boxplot(by=category, ax=ax, grid=grid)
-    #             a = vh.add_labels(a, xlabel=xlabel, ylabel=ylabel, **kwargs)
-    #             a.tick_params(labelsize=vh.formatting['tick.labelsize'],
-    #                        size=vh.formatting['tick.size'])
-    #
-    #             a = vh.adjust_lims(a, xlim[j], ylim[j])
-    #     else:
-    #         xlabel = variable[j] if variable not in self.column_labels else self.column_labels[variable]
-    #         ax = vh.add_labels(ax, xlabel=xlabel, ylabel=ylabel, main_title=" ", **kwargs)
-    #         ax = vh.adjust_lims(ax, xlim, ylim)
-    #         ax.tick_params(labelsize=vh.formatting['tick.labelsize'],
-    #                        size=vh.formatting['tick.size'])
-    #     return ax
 
-
-def frac_outside_threshold(group, thresholds, how='above', exclude=[]):
+def frac_outside_threshold(group, thresholds, how='above', exclude=None):
     """Helper function for computing the """
+    if exclude is None:
+        exclude = []
     columns = []
     results = []
     for column in group.columns:
