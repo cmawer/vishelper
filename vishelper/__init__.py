@@ -4,6 +4,6 @@ from .geo import *
 from .cluster import *
 from .interactive import *
 from .plots import *
-from .format import *
+from .reformat import *
 from .colorize import *
 from .helpers import *

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 import vishelper.config as config
 import vishelper.helpers as helpers
-import vishelper.format as format
+import vishelper.reformat as reformat
 import vishelper.plots as plots
 import vishelper.colorize as colorize
 
@@ -124,15 +124,15 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
     else:
         ax, plot_legend = plotxy(x, y, ax, plot_function, plot_color, df=df, labels=labels, **kwargs)
 
-    ax = format.add_labels(ax, xlabel, ylabel, title)
+    ax = reformat.add_labels(ax, xlabel, ylabel, title)
 
     if ticks is not None:
         ax.xaxis.set_ticks(ticks);
     ax.tick_params(labelsize=config.formatting['tick.labelsize'],
                    size=config.formatting['tick.size'])
 
-    ax = format.decide_legend(ax, legend, plot_legend, legend_kwargs)
-    ax = format.adjust_lims(ax, xlim, ylim)
+    ax = reformat.decide_legend(ax, legend, plot_legend, legend_kwargs)
+    ax = reformat.adjust_lims(ax, xlim, ylim)
 
     if tight_layout:
         plt.tight_layout()

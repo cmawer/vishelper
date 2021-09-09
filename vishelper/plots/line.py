@@ -1,6 +1,5 @@
-import matplotlib.pyplot as plt
 
-from vishelper.config import formatting
+import vishelper.config as config
 import vishelper.helpers as helpers
 
 
@@ -35,14 +34,14 @@ def line(x, y, ax=None, color=None, **kwargs):
     fig, ax = helpers.get_ax_fig(ax, kwargs=kwargs)
 
     if color is None:
-        color = formatting['color.single']
+        color = config.formatting['color.single']
 
     if 'marker' not in kwargs.keys():
         marker = None
     else:
         marker = kwargs.pop('marker')
     if 'markersize' not in kwargs.keys():
-        markersize = formatting['markersize']
+        markersize = config.formatting['markersize']
     else:
         markersize = kwargs.pop('markersize')
 
@@ -51,11 +50,11 @@ def line(x, y, ax=None, color=None, **kwargs):
     else:
         linestyle = kwargs.pop("linestyle")
     if 'linewidth' not in kwargs.keys():
-        linewidth = formatting["lines.linewidth"]
+        linewidth = config.formatting["lines.linewidth"]
     else:
         linewidth = kwargs.pop("linewidth")
     if 'alpha' not in kwargs.keys():
-        alpha = formatting['alpha.single']
+        alpha = config.formatting['alpha.single']
     else:
         alpha = kwargs.pop('alpha')
 
