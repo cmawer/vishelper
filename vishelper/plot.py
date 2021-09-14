@@ -19,12 +19,6 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, stacked=Fa
     else:
         x = helpers.listify(x, order=2)
 
-    if df is not None:
-        logger.debug(x)
-        logger.debug(y)
-        x = [df[x] for xi in x]
-        y = [df[y] for yi in y]
-
     if stacked or grouped:
         ax = plot_function(x, y, ax=ax,
                            color=plot_color, stacked=stacked, grouped=grouped,
@@ -116,13 +110,28 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
     if not plot_function:
         plot_function = plot_functions[kind]
 
-    plot_color = colorize.get_plot_color(color_data, color)
-
     if x is None:
         assert df is not None, 'Must provide either x or df'
         ax = plot_function(df, ax=ax, **kwargs)
         plot_legend = False
     else:
+        if df is not None:
+            logger.debug(x)
+            logger.debug(y)
+            if isinstance(x, str):
+                x = df[x]
+            else:
+                x = [df[xi] for xi in x]
+            if isinstance(y, str):
+                if labels is None:
+                    labels = [y]
+                y = df[y]
+            else:
+                if labels is None:
+                    labels = y
+                y = [df[yi] for yi in y]
+
+        plot_color = colorize.get_plot_color(color_data, color)
         ax, plot_legend = plotxy(x, y, ax, plot_function, plot_color, df=df, labels=labels, **kwargs)
 
     ax = reformat.add_labels(ax, xlabel, ylabel, title)
