@@ -18,6 +18,7 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, stacked=Fa
         x = helpers.listify(x, order=2, multiplier=np.shape(y)[0])
     else:
         x = helpers.listify(x, order=2)
+
     if df is not None:
         logger.debug(x)
         logger.debug(y)
@@ -115,7 +116,7 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
     if not plot_function:
         plot_function = plot_functions[kind]
 
-    plot_color = colorize.get_plot_color(x, color_data, color)
+    plot_color = colorize.get_plot_color(color_data, color)
 
     if x is None:
         assert df is not None, 'Must provide either x or df'

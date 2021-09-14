@@ -5,9 +5,11 @@ import numpy as np
 import vishelper.config as config
 
 
-def get_plot_color(x, color_data, color):
+def get_plot_color(color_data, color):
+
     if color_data is not None:
-        if len(x) == 1:
+        assert isinstance(color_data, list), 'color_data must be a list'
+        if len(np.shape(color_data)) == 1:
             plot_color = [color_data]
         else:
             plot_color = color_data
@@ -15,6 +17,7 @@ def get_plot_color(x, color_data, color):
         plot_color = [color] if type(color) == str else color
     else:
         plot_color = config.formatting["color.all"]
+
     return plot_color
 
 
