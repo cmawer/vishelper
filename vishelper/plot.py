@@ -52,7 +52,7 @@ plot_functions = dict(hist=plots.hist, scatter=plots.scatter, barh=plots.barh, b
 
 def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
          xlabel=None, ylabel=None, title=None, legend=None, legend_kwargs=None, ticks=None,
-         labels=None, color=None, color_data=None, figsize=None, xlim=None, ylim=None, tight_layout=False, **kwargs):
+         labels=None, color=None, color_data=None, color_by=None, figsize=None, xlim=None, ylim=None, tight_layout=False, **kwargs):
     """
 
     Args:
@@ -90,6 +90,7 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
         color_data (:obj:`list` of :obj:`str`, optional): If provided, list should be the same length of the data,
             providing an individual color for each data point. Default None in which case all points will be colored
             according to `color` argument.
+        color_by (:obj:`str`): Which column to color by if providing a dataframe in `df`
         figsize (tuple, optional): Figure size. Default is None and plot will be sized based on
             `vishelper.config.formatting['figure.figsize']`.
         xlim (tuple, optional): Tuple of minimum and maximum x values to plot (xmin, xmax). Default is None and
@@ -110,26 +111,13 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
     if not plot_function:
         plot_function = plot_functions[kind]
 
-    if x is None:
+    if x is None:  # if x is None and df is not, put df directly into plot function (e.g. heatmap)
         assert df is not None, 'Must provide either x or df'
         ax = plot_function(df, ax=ax, **kwargs)
         plot_legend = False
     else:
         if df is not None:
-            logger.debug(x)
-            logger.debug(y)
-            if isinstance(x, str):
-                x = df[x]
-            else:
-                x = [df[xi] for xi in x]
-            if isinstance(y, str):
-                if labels is None:
-                    labels = [y]
-                y = df[y]
-            else:
-                if labels is None:
-                    labels = y
-                y = [df[yi] for yi in y]
+            x, y, labels = helpers.parse_df(x, y, df, labels, color_by)
 
         plot_color = colorize.get_plot_color(color_data, color)
         ax, plot_legend = plotxy(x, y, ax, plot_function, plot_color, df=df, labels=labels, **kwargs)
