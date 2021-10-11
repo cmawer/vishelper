@@ -31,3 +31,24 @@ def listify(l, multiplier=1, order=1):
         l = [l] * multiplier
 
     return l
+
+
+def parse_df(x, y, df, labels=None, color_by=None):
+    labels = y if labels is None else labels
+    x = [x] if isinstance(x, str) else x
+    y = [y] if isinstance(y, str) else y
+
+    if color_by is not None:
+        x = [df.groupby(color_by)[xi].apply(list).tolist() for xi in x]
+        y = [df.groupby(color_by)[yi].apply(list).tolist() for yi in y]
+        labels = df[color_by].unique() # CHANGE
+    else:
+        x = [df[xi] for xi in x]
+        y = [df[yi] for yi in y]
+
+    # Need to remove dimension added to x
+    if np.shape(x)[0] == 1:
+        x = x[0]
+    if np.shape(y)[0] == 1:
+        y = y[0]
+    return x, y, labels
