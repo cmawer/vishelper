@@ -15,7 +15,11 @@ logger = logging.getLogger(__name__)
 to_geo_dir = lambda x: os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "data/")), x)
 
 geos = dict(usstates=dict(geo_data=to_geo_dir("us-states.json"), key_on='feature.properties.name'),
-            us_states=dict(geo_data=to_geo_dir("us-states.json"), key_on='feature.properties.name')
+            us_states=dict(geo_data=to_geo_dir("us-states.json"), key_on='feature.properties.name'),
+            zip3s=dict(geo_data=to_geo_dir("us-zip3s.json"), key_on='feature.properties.zip3'),
+            zip3=dict(geo_data=to_geo_dir("us-zip3s.json"), key_on='feature.properties.zip3'),
+            kma=dict(geo_data=to_geo_dir("us-kmas.json"), key_on='feature.properties.dat_market_area_id'),
+            kmas=dict(geo_data=to_geo_dir("us-kmas.json"), key_on='feature.properties.dat_market_area_id')
             )
 
 abspath_to_states = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/state-abbs.json"))
@@ -120,6 +124,8 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
     `geo_type` options:
         * 'us_states': will join to a column containing state names. See
             `to_state_name()` to convert state abbreviations to full state names
+        * 'zip3': will join to a column containing zip3s
+        * 'kma': will join to a column containing key market area ids
 
 
     Args:
