@@ -1,16 +1,10 @@
-import pandas as pd
-import numpy as np
-from IPython.html.widgets import interactive
-from IPython.html import widgets
-from IPython.display import display
-import scipy.cluster.hierarchy as hac
-from pandas.plotting import scatter_matrix
-from sklearn.decomposition import PCA, FactorAnalysis
-import seaborn as sns
-from matplotlib import pyplot as plt
 import matplotlib as mpl
-import vishelper as vh
+import numpy as np
+import pandas as pd
+import scipy.cluster.hierarchy as hac
+from matplotlib import pyplot as plt
 
+import vishelper as vh
 
 mpl_update = {'font.size': 14, 'figure.figsize': [12.0, 8.0],
               'axes.labelsize': 20, 'axes.labelcolor': '#677385',
@@ -235,32 +229,3 @@ def visualize_clusters(features, level, feature_names, bins=20, xlim=None, ylim=
     plt.legend()
     plt.tight_layout()
 
-
-def interactive_visualize(features, levels, feature_names, slider_value=None, bins=20, xlim=None, ylim=None, log=False):
-    """ Creates a visualization from visualize_clusters() that can be changed according to a level chosen
-        by a slider bar.
-
-        :param features :Pandas dataframe with rows for each observation, columns for each feature value and
-                     cluster label for each level (see create_labels()).
-        :param levels: Levels that cluster labels were assigned to observations (see create_labels())
-        :param feature_names: list of strings - names of features that histograms are desired.
-        :param slider_value: Optional - value for level which initial visualization is wanted (initial slider value)
-        :param bins: optional int or list of values - argument for bins in histogram function. Int for number of bins
-                     or list of bin centers.
-        :param xlim: [x_min, x_max] - window for x values. Use if you want to standardize x range plotted.
-        :param ylim: [y_min, y_max] - window for y values. Use if you want to standardize y range plotted.
-        :param log: optional. Default False. If true, makes histogram y-axis on log scale.
-
-    """
-
-    if slider_value is None:
-        slider_val = len(levels) - 1
-    else:
-        slider_val = np.abs(np.array(levels) - slider_value).argmin()
-    t_slider = widgets.FloatSlider(min=0, max=len(levels) - 1, step=1,
-                                   value=slider_val, readout=False)
-    w = interactive(lambda level:
-                    visualize_clusters(features, levels[int(level)],
-                                       feature_names, bins, xlim, ylim, log),
-                    level=t_slider)
-    display(w)
