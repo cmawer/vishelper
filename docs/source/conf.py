@@ -23,13 +23,13 @@ sys.path.insert(0, os.path.abspath('../vishelper'))
 # -- Project information -----------------------------------------------------
 
 project = 'vishelper'
-copyright = '2019, Chloe Mawer'
+copyright = '2022, Chloe Mawer'
 author = 'Chloe Mawer'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.1.3'
 
 
 # -- General configuration ---------------------------------------------------

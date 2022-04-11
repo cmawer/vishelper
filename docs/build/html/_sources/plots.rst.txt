@@ -1,0 +1,61 @@
+plots package
+=============
+
+Submodules
+----------
+
+plots.bar module
+----------------
+
+.. automodule:: plots.bar
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plots.boxplot module
+--------------------
+
+.. automodule:: plots.boxplot
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plots.heatmap module
+--------------------
+
+.. automodule:: plots.heatmap
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plots.hist module
+-----------------
+
+.. automodule:: plots.hist
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plots.line module
+-----------------
+
+.. automodule:: plots.line
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plots.scatter module
+--------------------
+
+.. automodule:: plots.scatter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: plots
+   :members:
+   :undoc-members:
+   :show-inheritance:

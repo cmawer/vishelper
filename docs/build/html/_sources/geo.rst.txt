@@ -1,0 +1,21 @@
+geo package
+===========
+
+Submodules
+----------
+
+geo.geo module
+--------------
+
+.. automodule:: geo.geo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: geo
+   :members:
+   :undoc-members:
+   :show-inheritance:

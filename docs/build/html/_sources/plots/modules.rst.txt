@@ -1,0 +1,7 @@
+plots
+=====
+
+.. toctree::
+   :maxdepth: 4
+
+   plots

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vishelper.plots package &mdash; vishelper 0.1.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="vishelper package" href="vishelper.html" />
+    <link rel="prev" title="vishelper.geo package" href="vishelper.geo.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> vishelper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="vishelper.geo.html">vishelper.geo package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vishelper.plots package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots.bar">vishelper.plots.bar module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots.boxplot">vishelper.plots.boxplot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots.heatmap">vishelper.plots.heatmap module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots.hist">vishelper.plots.hist module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots.line">vishelper.plots.line module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots.scatter">vishelper.plots.scatter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.plots">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="vishelper.html">vishelper package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="vishelper.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="vishelper.geo.html">vishelper.geo package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">vishelper.plots package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots.bar">vishelper.plots.bar module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots.boxplot">vishelper.plots.boxplot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots.heatmap">vishelper.plots.heatmap module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots.hist">vishelper.plots.hist module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots.line">vishelper.plots.line module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots.scatter">vishelper.plots.scatter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.plots">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.cluster">vishelper.cluster module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.colorize">vishelper.colorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.config">vishelper.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.dfplot">vishelper.dfplot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.helpers">vishelper.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.interactive">vishelper.interactive module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.plot">vishelper.plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.reformat">vishelper.reformat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">vishelper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>vishelper.plots package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vishelper.plots.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="vishelper-plots-package">
+<h1>vishelper.plots package<a class="headerlink" href="#vishelper-plots-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-vishelper.plots.bar">
+<span id="vishelper-plots-bar-module"></span><h2>vishelper.plots.bar module<a class="headerlink" href="#module-vishelper.plots.bar" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.bar.bar">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.bar.</span></span><span class="sig-name descname"><span class="pre">bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/bar.html#bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.bar.bar" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.bar.barh">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.bar.</span></span><span class="sig-name descname"><span class="pre">barh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stacked</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/bar.html#barh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.bar.barh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.bar.get_x_bars">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.bar.</span></span><span class="sig-name descname"><span class="pre">get_x_bars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grouped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spacing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/bar.html#get_x_bars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.bar.get_x_bars" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plots.boxplot">
+<span id="vishelper-plots-boxplot-module"></span><h2>vishelper.plots.boxplot module<a class="headerlink" href="#module-vishelper.plots.boxplot" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.boxplot.boxplot">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.boxplot.</span></span><span class="sig-name descname"><span class="pre">boxplot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orient</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'v'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">palette</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Set3'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">face_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xrotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yrotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/boxplot.html#boxplot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.boxplot.boxplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws boxplots to compare distributions of numerical variables for a set of categories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – If orient=’v’, categorical values. If orient=’h’, numerical values.
+List of values or column name of values if data is provided.</p></li>
+<li><p><strong>y</strong> – If orient=’v’, numerical values. If orient=’h’, categorical values.
+List of values or column name of values if data is provided.</p></li>
+<li><p><strong>hue</strong> – Categorical values to group box vishelper by. List of values or column name of values if data is provided.</p></li>
+<li><p><strong>data</strong> – Optional, dataframe containing data to plot. Default: None</p></li>
+<li><p><strong>orient</strong> – ‘v’ to plot box vishelper vertically, ‘h’ to plot horizontally. Default: ‘v’</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes._subplots.AxesSubplot</span></code>, optional) – Matplotlib axes handle. Default is None
+and a new <cite>ax</cite> is generated along with the <cite>fig</cite>.</p></li>
+<li><p><strong>palette</strong> – Colors to use for the different levels of the hue variable. Should be something that can be interpreted
+by color_palette(), or a dictionary mapping hue levels to matplotlib colors.</p></li>
+<li><p><strong>edge_color</strong> – Color for edges of box plot. Default: ‘black’. Used if color_map or pallet are provided.</p></li>
+<li><p><strong>face_color</strong> – Color for boxes in box plot. Default: None. <cite>pallet</cite> or <cite>color_map</cite> is used if not provided.</p></li>
+<li><p><strong>color_map</strong> – Dictionary of mapping between unique categorical values and colors. Default None.
+<cite>pallet</cite> or <cite>face_color</cite> used if not provided.</p></li>
+<li><p><strong>xrotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Degree to rotate x-label. Default: None</p></li>
+<li><p><strong>yrotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – Degree to rotate y-label. Default None.</p></li>
+<li><p><strong>**kwargs</strong> – Any additional keyword arguments that <cite>seaborn.boxplot()</cite> can take</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Matplotlib figure object. Only returned if ax is not provided as an argument.
+ax (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes._subplots.AxesSubplot</span></code>): Axes object with the plot(s)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fig (matplotlib.figure.Figure)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plots.heatmap">
+<span id="vishelper-plots-heatmap-module"></span><h2>vishelper.plots.heatmap module<a class="headerlink" href="#module-vishelper.plots.heatmap" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.heatmap.heatmap">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.heatmap.</span></span><span class="sig-name descname"><span class="pre">heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yticklabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log10</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xrotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yrotation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/heatmap.html#heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.heatmap.heatmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plots.hist">
+<span id="vishelper-plots-hist-module"></span><h2>vishelper.plots.hist module<a class="headerlink" href="#module-vishelper.plots.hist" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.hist.hist">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.hist.</span></span><span class="sig-name descname"><span class="pre">hist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/hist.html#hist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.hist.hist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a histogram based on values of <cite>x</cite></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plots.line">
+<span id="vishelper-plots-line-module"></span><h2>vishelper.plots.line module<a class="headerlink" href="#module-vishelper.plots.line" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.line.add_dline">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.line.</span></span><span class="sig-name descname"><span class="pre">add_dline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/line.html#add_dline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.line.add_dline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a diagonal line with slope, m, and y-intercept, b, between <cite>x_min</cite> and <cite>x_max</cite></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.line.add_hline">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.line.</span></span><span class="sig-name descname"><span class="pre">add_hline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/line.html#add_hline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.line.add_hline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a horizontal line to the axis <cite>ax</cite> at the provided <cite>y</cite> value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.line.add_vline">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.line.</span></span><span class="sig-name descname"><span class="pre">add_vline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/line.html#add_vline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.line.add_vline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a vertical line to the axis <cite>ax</cite> at the provided <cite>x</cite> value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.line.line">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.line.</span></span><span class="sig-name descname"><span class="pre">line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/line.html#line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.line.line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plots.scatter">
+<span id="vishelper-plots-scatter-module"></span><h2>vishelper.plots.scatter module<a class="headerlink" href="#module-vishelper.plots.scatter" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.plots.scatter.scatter">
+<span class="sig-prename descclassname"><span class="pre">vishelper.plots.scatter.</span></span><span class="sig-name descname"><span class="pre">scatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/plots/scatter.html#scatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.plots.scatter.scatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a scatter plot of (x, y)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<cite>list</cite> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – x-coordinates for plotting. Must be same size as <cite>y</cite></p></li>
+<li><p><strong>y</strong> (<cite>list</cite> or <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – y-coordinates for plotting. Must be same size as <cite>x</cite></p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes._subplots.AxesSubplot</span></code>) – Matplotlib axes handle</p></li>
+<li><p><strong>color</strong> – <p>The marker color. Can be a olor, sequence, or sequence of color, optional. Defaults to the first value
+in <a href="#id1"><span class="problematic" id="id2">`</span></a>formatting[“color.darks”]. Possible values:</p>
+<blockquote>
+<div><p>A single color format string.
+A sequence of color specifications of length n.
+A sequence of n numbers to be mapped to colors using cmap and norm.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>alpha</strong> (<cite>float</cite>, optional) – The alpha blending value, between 0 (transparent) and 1 (opaque).
+Defaults to <cite>formatting[‘alpha.single’]</cite></p></li>
+<li><p><strong>logx</strong> (<cite>bool</cite>) – If True, the x-axis will be transformed to log scale</p></li>
+<li><p><strong>logy</strong> (<cite>bool</cite>) – If True, the y-axis will be transformed to log scale</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments are passed to <cite>ax.scatter()</cite></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Matplotlib axes handle with scatter plot on it</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ax (<code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes._subplots.AxesSubplot</span></code>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.plots">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-vishelper.plots" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="vishelper.geo.html" class="btn btn-neutral float-left" title="vishelper.geo package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vishelper.html" class="btn btn-neutral float-right" title="vishelper package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Chloe Mawer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
