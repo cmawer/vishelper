@@ -53,25 +53,75 @@ plot_functions = dict(hist=plots.hist, scatter=plots.scatter, barh=plots.barh, b
 def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
          xlabel=None, ylabel=None, title=None, legend=None, legend_kwargs=None, ticks=None,
          labels=None, color=None, color_data=None, color_by=None, figsize=None, xlim=None, ylim=None, tight_layout=False, **kwargs):
-    """
+    """Makes a plot of one or more univariate or multivariate datasets.
+
+    Options for `kind` of plot:
+
+    Univariate, continuous data (`y=None`):
+
+    * `hist` (histogram)
+
+    Bivariate, continous x continuous data:
+
+    * `scatter`
+    * `line`
+
+    Bivariate, categorical x continuous data:
+
+    * `boxplot`
+    * `bar`
+    * `barh` (horizontal bar plot)
+
+    Multivariate, continuous data (`x=None`, `y=None`, `df != None`):
+
+    * `heatmap`
+
 
     Args:
-        x (list): Data to be plotted in the x-axis or for univariate plots. If None, df must be provided.
-        y (:obj:`list`, optional): Default None (implies univariate plot).
-        kind (:obj:`str`, optional): Type of plot. Defaults to None, which implies `plot_function` should be given.
-            Univariate continuous (y=None)
-            * hist
-            * barh
+        x (optional, default `None`): Data or column name(s) to be plotted for
+            univariate plots, along the x-axis for continuous x continuous
+            data, or categorical data for categorical x
+            continuous data.
 
-            Bivariate: continous x continuous
-            * scatter
-            * line
+            * For one dataset: `list` or `np.array` of x-data  or `str` \
+                denoting column of `df` to use for x-data.
+            * More than one dataset: `list` of `list` of x-data sets or \
+                 `list` of `str` with columns to be used for x-data.
+            * If None, `df` must be provided and `kind` must be 'heatmap'.
+        y (optional):
+            Univariate: `None` (default)
+            For one bivariate dataset: `list` or `np.array` of y-data  or `str`
+                denoting column of `df` to use for y-data.
+            More than one bivariate dataset: `list` of `list` of y-data sets or
+                `list` of `str` with columns to be used for y-data.
+        kind (:obj:`str`, optional): Type of plot. Defaults to None,
+            which implies `plot_function` must be given. Options for `kind`:
 
-            Bivariate: categorical x continuous
-            * boxplot
-        df: Dataframe containing the data to be plotted
-        plot_function: Default None. If "kind" is not given, can provide a plot function with the
-            form plot_function(x, y, ax, **kwargs) or plot_function(x, ax, **kwargs)
+
+            Univariate, continuous data (`y=None`):
+
+        * `hist` (histogram)
+
+        Bivariate, continous x continuous data:
+
+        * `scatter`
+        * `line`
+
+        Bivariate, categorical x continuous data:
+
+        * `boxplot`
+        * `bar`
+        * `barh` (horizontal bar plot)
+
+        Multivariate, continuous data (`x=None`, `y=None`, `df != None`):
+
+        * `heatmap`
+
+        df: Dataframe containing the data to be plotted. Default None. Data
+            must be provided in `x` (and `y` if bivariate)
+        plot_function: Default None. If "kind" is not given, can provide a plot
+            function with the form plot_function(x, y, ax, **kwargs) or
+            plot_function(x, ax, **kwargs).
         ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`, optional): Matplotlib axes handle. Default is None
             and a new `ax` is generated along with the `fig`.
         xlabel (:obj:`str`, optional): Label for x axis. Default None.

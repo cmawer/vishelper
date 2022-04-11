@@ -193,12 +193,12 @@ class VisDF:
             columns_to_plot (:obj:`list` of [:obj:`str` or :obj:`lists`): The
                 column(s) to plot in each figure.
 
-                *Univariate only*: If only plotting univariate plots,
+                *Univariate only*: If only plotting univariate vishelper,
                     `columns_to_plot` will look like
                     ['column1','column2',..., 'columnN']  where 'column1' will
                     be plot in figure 1, 'column2' in figure 2, etc.
 
-                **Bivariate only*: If only plotting bivariate plots,
+                **Bivariate only*: If only plotting bivariate vishelper,
                     `columns_to_plot` will look like
                     [['columnx1', 'columny1'],['columnx2', 'columny2], ..., ]
                     where 'columnx1' will be plotted vs 'columny1' in figure 1.
@@ -268,7 +268,7 @@ class VisDF:
             raise ValueError('please provide layout as (n_rows, n_cols)')
         elif layout[0] * layout[1] < num_plots:
             raise ValueError(
-                'layout provide does not have enough space for all desired plots')
+                'layout provide does not have enough space for all desired vishelper')
 
         # Add colors to kwargs if column to color by provided
         if color_by is not None:

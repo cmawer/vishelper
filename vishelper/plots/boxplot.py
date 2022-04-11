@@ -13,9 +13,9 @@ def boxplot(x, y, hue=None, data=None, orient='v', ax=None,
           List of values or column name of values if data is provided.
        y: If orient='v', numerical values. If orient='h', categorical values.
           List of values or column name of values if data is provided.
-       hue: Categorical values to group box plots by. List of values or column name of values if data is provided.
+       hue: Categorical values to group box vishelper by. List of values or column name of values if data is provided.
        data: Optional, dataframe containing data to plot. Default: None
-       orient: 'v' to plot box plots vertically, 'h' to plot horizontally. Default: 'v'
+       orient: 'v' to plot box vishelper vertically, 'h' to plot horizontally. Default: 'v'
        ax (:py:class:`matplotlib.axes._subplots.AxesSubplot`, optional): Matplotlib axes handle. Default is None
             and a new `ax` is generated along with the `fig`.
        palette: Colors to use for the different levels of the hue variable. Should be something that can be interpreted

@@ -1,9 +1,9 @@
 import logging
-import matplotlib.pyplot as plt
+
 import numpy as np
 
-from vishelper.config import formatting
 import vishelper.helpers as helpers
+from vishelper.config import formatting
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,8 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
             final_len = len(x)
             if final_len != original_len:
                 diff = original_len - final_len
-                logger.warning("A total of %i NaN values out of %i observations were removed" % (diff, original_len))
+                logger.warning("A total of %i NaN values out of %i "
+                               "observations were removed", diff, original_len)
         else:
             x_to_process = x
             x = []
@@ -28,8 +29,10 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
                 final_len = len(subx)
                 if final_len != original_len:
                     diff = original_len - final_len
-                    logger.warning("A total of %i NaN values out of %i observations were removed from set %i" % (
-                        diff, original_len, j))
+                    logger.warning(
+                        "A total of %i NaN values out of %i observations were"
+                        " removed from set %i",
+                        diff, original_len, j)
 
     fig, ax = helpers.get_ax_fig(ax, kwargs=kwargs)
 
@@ -56,4 +59,3 @@ def hist(x, ax=None, color=None, logx=False, ignore_nan=True, **kwargs):
         return ax
     else:
         return fig, ax
-
