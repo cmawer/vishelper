@@ -28,5 +28,7 @@ The functions in this package have been built to be fairly flexible with various
 
 Note: `selenium` is only required to run `vishelper.save_map()` with `png=True` or `vishelper.html_to_png()`. If not installed, the package can still be imported and the code will only break if either of these functions is executed. 
 
-## Guide 
-See `vishelper-demo.ipynb` for step by step guide 
+## Guides and documentation 
+See notebooks in `demos/` for step-by-step guides. 
+
+See documentation [here](https://cmawer.github.io/vishelper/).
