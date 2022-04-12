@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vishelper.geo package &mdash; vishelper 0.1.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+    <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="vishelper.plots package" href="vishelper.plots.html" />
+    <link rel="prev" title="vishelper documentation !" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> vishelper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vishelper.geo package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.geo.geo">vishelper.geo.geo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-vishelper.geo">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vishelper.plots.html">vishelper.plots package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="vishelper.html">vishelper package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="vishelper.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">vishelper.geo package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.geo.geo">vishelper.geo.geo module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-vishelper.geo">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vishelper.plots.html">vishelper.plots package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.cluster">vishelper.cluster module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.colorize">vishelper.colorize module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.config">vishelper.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.dfplot">vishelper.dfplot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.helpers">vishelper.helpers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.interactive">vishelper.interactive module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.plot">vishelper.plot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper.reformat">vishelper.reformat module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vishelper.html#module-vishelper">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">vishelper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>vishelper.geo package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/vishelper.geo.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="vishelper-geo-package">
+<h1>vishelper.geo package<a class="headerlink" href="#vishelper-geo-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-vishelper.geo.geo">
+<span id="vishelper-geo-geo-module"></span><h2>vishelper.geo.geo module<a class="headerlink" href="#module-vishelper.geo.geo" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.add_df_latlon">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">add_df_latlon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lng_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lng'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">15000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_color_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'color'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_how</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outline_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_outline_color_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_continuous_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">popup_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_popup_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2650</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#add_df_latlon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.add_df_latlon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add points to a map from data in a dataframe. Can color and size points based on data columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pandas.DataFrame</em><em>(</em><em>)</em>) – Dataframe containing at least <cite>lat_col</cite> and <cite>lng_col</cite>. If coloring according to
+data or adding a popup, dataframe should contain color_col, popup_col, and/or raw_color_col.</p></li>
+<li><p><strong>lat_col</strong> (<cite>str</cite>) – Name of column containing latitude</p></li>
+<li><p><strong>lng_col</strong> (<cite>str</cite>) – Name of column containing longitude</p></li>
+<li><p><strong>radius_col</strong> (<cite>str</cite>) – Name of column containing values for the radius of each point. Optional. If not provided,
+<cite>radius</cite> will be used for all points.</p></li>
+<li><p><strong>radius</strong> (<cite>int</cite>) – Radius of point if constant for all points. Default 15000.</p></li>
+<li><p><strong>color_col</strong> (<cite>str</cite>) – Name of column containing data to color the points according to. Must provide <cite>color_how</cite> to</p></li>
+<li><p><strong>raw_color_col</strong> (<cite>str</cite>) – If color_how=’raw’, name of column containing raw color name for each point. If
+color_how = ‘continuous’ or ‘categorical’, color assignments will be put in a column named <cite>raw_color_col</cite>.
+Default is ‘color’. It will not be used if <cite>color_how</cite> is not provided.</p></li>
+<li><p><strong>color_how</strong> – <p>How to color the points. Options include:
+* None: The color provided in <cite>colors</cite> will be used for all points. If colors contains a list, the first</p>
+<blockquote>
+<div><p>color in the list will be used.</p>
+</div></blockquote>
+<ul>
+<li><p>Raw: The color in <cite>raw_color_col</cite> will be used as the color for each point.</p></li>
+<li><p>Continuous: Points will be colored based on a colormap and the values of data in the <a href="#id1"><span class="problematic" id="id2">`</span></a>color_col</p></li>
+</ul>
+</p></li>
+<li><p><strong>colors</strong> (<cite>str</cite> or <cite>list</cite>) – If <cite>color_col</cite> and <cite>raw_color_col</cite> are None, value or first value of list are used
+to color each point. If <cite>color_col</cite> is not None and <cite>color_how</cite> = ‘categorical’, list of colors is used.</p></li>
+<li><p><strong>outline_color</strong> (<cite>str</cite>) – </p></li>
+<li><p><strong>raw_outline_color_col</strong> (<cite>str</cite>) – name of column containing raw color name for the outline of each point.</p></li>
+<li><p><strong>fill</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If True, circles will be filled in with color. Default True.</p></li>
+<li><p><strong>fill_opacity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – Opacity of area fill, range 0-1.</p></li>
+<li><p><strong>color_continuous_kwargs</strong> – </p></li>
+<li><p><strong>popup_col</strong> (<cite>str</cite>) – Name of column containing information to display in a hover popup on map. Optional.</p></li>
+<li><p><strong>max_popup_width</strong> (<cite>int</cite>) – Maximum width of popup box. Default 2650.</p></li>
+<li><p><strong>fmap</strong> (<em>folium.Map</em>) – If a map object has already been created, it can be provided and points will be added to it.</p></li>
+<li><p><strong>**kwargs</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.add_latlons">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">add_latlons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#add_latlons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.add_latlons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.add_line">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">add_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latlonA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latlonB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'black'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#add_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.add_line" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.basic_map">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">basic_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#basic_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.basic_map" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.
+zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting
+tiles (<cite>str</cite>): Name of folium tiles to use. Default given by vh.geo_formatting.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>folium map object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fmap (folium.Map)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.filter_geojson">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">filter_geojson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geojson_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geojson_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ZCTA5CE10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_geos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#filter_geojson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.filter_geojson" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.html_to_png">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">html_to_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">htmlpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pngpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2560</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5625</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#html_to_png"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.html_to_png" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.plot_map">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">plot_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_geos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#plot_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.plot_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a choropleth map based on a dataframe. Colors regions in a map based on provided data.</p>
+<p>Must provide geo_type <em>or</em> geo_data and key_on.</p>
+<dl class="simple">
+<dt><cite>geo_type</cite> options:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>‘us_states’: will join to a column containing state names. See</dt><dd><p><cite>to_state_name()</cite> to convert state abbreviations to full state names</p>
+</dd>
+</dl>
+</li>
+<li><p>‘zip3’: will join to a column containing zip3s</p></li>
+<li><p>‘kma’: will join to a column containing key market area ids</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Dataframe containing <cite>color_column</cite> and <cite>geo_column</cite>. If None,
+all regions will be colored a single color.</p></li>
+<li><p><strong>color_column</strong> (<cite>str</cite>) – Name of column in dataframe containing data to color map
+according to. If None, df must be None as well. All regions will be colored
+a single color.</p></li>
+<li><p><strong>geo_column</strong> (<cite>str</cite>) – Name of column in dataframe containing geographic key that
+can join to <cite>key_on</cite> in geoJson. If None, df must be None as well. All regions
+will be colored a single color.</p></li>
+<li><p><strong>geo_type</strong> (<cite>str</cite>) – If provided, maps to a geo_data and key_on for a given geography</p></li>
+<li><p><strong>above.</strong> (<em>type. Default None. Must provide this</em><em> or </em><em>geo_data and key_on. See geo_type options</em>) – </p></li>
+<li><p><strong>geo_data</strong> (<cite>str</cite>) – URL, file path, or data (json, dict, geopandas, etc) to your
+GeoJSON geometries. Required if geo_type not provided.</p></li>
+<li><p><strong>key_on</strong> (<cite>str</cite>) – Variable in the geo_data GeoJSON file to bind the data to. Must start
+with ‘feature’ and be in JavaScript objection notation. Ex: ‘feature.id’ or
+‘feature.properties.statename’. If not provided, must have geo_type specified.</p></li>
+<li><p><strong>legend_name</strong> (<cite>str</cite>) – Name of legend. If None, legend will be labeled with
+<cite>color_column</cite> name formatted witH underscores removed.</p></li>
+<li><p><strong>fmap</strong> (<em>folium.Map</em>) – map object. Default None - will create new map.</p></li>
+<li><p><strong>reset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – Default True. Clears map data from fmap object.</p></li>
+<li><p><strong>fill_color</strong> (<cite>str</cite>) – Area fill color. Can pass a hex code, color name,
+or if you are binding data, one of the following color brewer palettes:
+‘BuGn’, ‘BuPu’, ‘GnBu’, ‘OrRd’, ‘PuBu’, ‘PuBuGn’, ‘PuRd’, ‘RdPu’,
+‘YlGn’, ‘YlGnBu’, ‘YlOrBr’, and ‘YlOrRd’. Default given by vh.geo_formatting.</p></li>
+<li><p><strong>filter_geos</strong> (<cite>bool</cite>) – If True,  will filter out all geoJSON entries for regions not
+included in the dataframe, <cite>df</cite>. This is typically necessary as folium generally
+won’t plot anything if there isn’t a match for each region.</p></li>
+<li><p><strong>threshold_scale</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.10)"><em>list</em></a>) – List of thresholds for coloring the data. The list must have more than three values,
+each item must be larger in value than the last. All data must have values between the first and
+last items of the list. Example: [100, 200, 300, 400] In this case, all data in df[color_column] must
+be between 100 and 400.</p></li>
+<li><p><strong>**kwargs</strong> – location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.
+zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting
+tiles (<cite>str</cite>): Name of folium tiles to use. Default given by vh.geo_formatting.
+fill_opacity (<cite>float</cite>): Opacity of area fill, range 0-1. Default given by vh.geo_formatting.
+line_opacity (<cite>float</cite>): Opacity of line, range 0-1. Default given by vh.geo_formatting.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Map with geographic regions colored according to provided data</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>fmap (folium.Map)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.plot_subset">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">plot_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_column</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#plot_subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.plot_subset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.read_geojson">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">read_geojson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geo_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#read_geojson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.read_geojson" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.save_map">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">save_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htmlpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pngpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">png</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2560</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5625</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">browser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#save_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.save_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.slider_interact">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">slider_interact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disabled</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#slider_interact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.slider_interact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.to_geo_dir">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">to_geo_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#vishelper.geo.geo.to_geo_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="vishelper.geo.geo.to_state_name">
+<span class="sig-prename descclassname"><span class="pre">vishelper.geo.geo.</span></span><span class="sig-name descname"><span class="pre">to_state_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_column</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vishelper/geo/geo.html#to_state_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#vishelper.geo.geo.to_state_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a column with the state names corresponding to the abbreviations in the state_column provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Dataframe containing <cite>column</cite> name</p></li>
+<li><p><strong>state_column</strong> – Name of column containing state abbreviations</p></li>
+<li><p><strong>new_column</strong> – Name of column to create with state names</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe now containing <cite>new_column</cite></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>df</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-vishelper.geo">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-vishelper.geo" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="vishelper documentation !" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vishelper.plots.html" class="btn btn-neutral float-right" title="vishelper.plots package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Chloe Mawer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

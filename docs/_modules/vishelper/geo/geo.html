@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>vishelper.geo.geo &mdash; vishelper 0.1.3 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+    <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> vishelper
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../vishelper.html">vishelper package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">vishelper</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>vishelper.geo.geo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for vishelper.geo.geo</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">import</span> <span class="nn">folium</span>
+<span class="kn">import</span> <span class="nn">ipywidgets</span> <span class="k">as</span> <span class="nn">widgets</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">import</span> <span class="nn">vishelper</span> <span class="k">as</span> <span class="nn">vh</span>
+<span class="kn">import</span> <span class="nn">vishelper.config</span> <span class="k">as</span> <span class="nn">config</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">to_geo_dir</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;data/&quot;</span><span class="p">)),</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="n">geos</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">usstates</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geo_data</span><span class="o">=</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;us-states.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.name&#39;</span><span class="p">),</span>
+            <span class="n">us_states</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geo_data</span><span class="o">=</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;us-states.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.name&#39;</span><span class="p">),</span>
+            <span class="n">zip3s</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geo_data</span><span class="o">=</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;us-zip3s.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.zip3&#39;</span><span class="p">),</span>
+            <span class="n">zip3</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geo_data</span><span class="o">=</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;us-zip3s.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.zip3&#39;</span><span class="p">),</span>
+            <span class="n">kma</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geo_data</span><span class="o">=</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;us-kmas.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.dat_market_area_id&#39;</span><span class="p">),</span>
+            <span class="n">kmas</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">geo_data</span><span class="o">=</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;us-kmas.json&quot;</span><span class="p">),</span> <span class="n">key_on</span><span class="o">=</span><span class="s1">&#39;feature.properties.dat_market_area_id&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+
+<span class="n">abspath_to_states</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;data/state-abbs.json&quot;</span><span class="p">))</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">to_geo_dir</span><span class="p">(</span><span class="s2">&quot;state-abbs.json&quot;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">state_map</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">geoformatting</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="s2">&quot;location_start&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">38</span><span class="p">,</span> <span class="o">-</span><span class="mf">96.5</span><span class="p">],</span>
+                 <span class="s2">&quot;fill_color&quot;</span><span class="p">:</span> <span class="s1">&#39;GnBu&#39;</span><span class="p">,</span>
+                 <span class="s2">&quot;fill_color_single&quot;</span><span class="p">:</span><span class="n">config</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;color.single&quot;</span><span class="p">],</span>
+                 <span class="s2">&quot;fill_opacity&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="s2">&quot;line_opacity&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="s2">&quot;opacity&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">15000</span><span class="p">,</span>
+                 <span class="s2">&quot;colors&quot;</span><span class="p">:</span><span class="n">config</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;color.darks&quot;</span><span class="p">],</span>
+                 <span class="s2">&quot;tiles&quot;</span><span class="p">:</span> <span class="s2">&quot;CartoDB positron&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="to_state_name"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.to_state_name">[docs]</a><span class="k">def</span> <span class="nf">to_state_name</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">state_column</span><span class="p">,</span> <span class="n">new_column</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a column with the state names corresponding to the abbreviations in the state_column provided.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: Dataframe containing `column` name</span>
+<span class="sd">        state_column: Name of column containing state abbreviations</span>
+<span class="sd">        new_column: Name of column to create with state names</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        df: Dataframe now containing `new_column`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">new_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">state_column</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">state_map</span> <span class="k">else</span> <span class="n">state_map</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+    <span class="n">non_states</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">state_column</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">state_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;The following values were not state names and were kept the same in the new column: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">non_states</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="basic_map"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.basic_map">[docs]</a><span class="k">def</span> <span class="nf">basic_map</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.</span>
+<span class="sd">            zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting</span>
+<span class="sd">            tiles (`str`): Name of folium tiles to use. Default given by vh.geo_formatting.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        fmap (folium.Map): folium map object</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">),</span> <span class="n">tiles</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;tiles&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="filter_geojson"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.filter_geojson">[docs]</a><span class="k">def</span> <span class="nf">filter_geojson</span><span class="p">(</span><span class="n">geojson_dict</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">geo_col</span><span class="p">,</span> <span class="n">geojson_key</span><span class="o">=</span><span class="s1">&#39;ZCTA5CE10&#39;</span><span class="p">,</span> <span class="n">filter_geos</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="c1"># We want to only include features that are in our dataset so we clear the features key and rebuild it.</span>
+    <span class="n">filtered_geojson_dict</span> <span class="o">=</span> <span class="n">geojson_dict</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">filtered_geojson_dict</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">geo_values</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">geo_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">included_geos</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">geojson_dict</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]:</span>
+        <span class="n">geojson_val</span> <span class="o">=</span> <span class="n">feat</span><span class="p">[</span><span class="s1">&#39;properties&#39;</span><span class="p">][</span><span class="n">geojson_key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">filter_geos</span> <span class="ow">and</span> <span class="n">geojson_val</span> <span class="ow">in</span> <span class="n">geo_values</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filter_geos</span><span class="p">:</span>
+            <span class="n">filtered_geojson_dict</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feat</span><span class="p">)</span>
+            <span class="n">included_geos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">geojson_val</span><span class="p">)</span>
+
+    <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">geo_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">included_geos</span><span class="p">)]</span>
+    <span class="n">not_included_geos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="p">[</span><span class="n">geo_col</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">included_geos</span><span class="p">)][</span><span class="n">geo_col</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_included_geos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_included_geos</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Over 20 geos were not in the provided geojson and will not be plotted.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The following geos were not in the provided geojson and will not be plotted: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                           <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">not_included_geos</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">filtered_geojson_dict</span><span class="p">,</span> <span class="n">filtered_df</span></div>
+
+
+<div class="viewcode-block" id="read_geojson"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.read_geojson">[docs]</a><span class="k">def</span> <span class="nf">read_geojson</span><span class="p">(</span><span class="n">geo_data</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">geo_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">geojson_dict</span> <span class="o">=</span> <span class="n">geo_data</span>
+    <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">geo_data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">geo_data</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">):</span>
+        <span class="n">geojson_dict</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">geo_data</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">geo_data</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">geojson_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">geojson_dict</span></div>
+
+
+<div class="viewcode-block" id="plot_map"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.plot_map">[docs]</a><span class="k">def</span> <span class="nf">plot_map</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geo_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geo_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geo_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key_on</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">legend_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filter_geos</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">threshold_scale</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a choropleth map based on a dataframe. Colors regions in a map based on provided data.</span>
+
+<span class="sd">    Must provide geo_type *or* geo_data and key_on.</span>
+
+<span class="sd">    `geo_type` options:</span>
+<span class="sd">        * &#39;us_states&#39;: will join to a column containing state names. See</span>
+<span class="sd">            `to_state_name()` to convert state abbreviations to full state names</span>
+<span class="sd">        * &#39;zip3&#39;: will join to a column containing zip3s</span>
+<span class="sd">        * &#39;kma&#39;: will join to a column containing key market area ids</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        df: Dataframe containing `color_column` and `geo_column`. If None,</span>
+<span class="sd">            all regions will be colored a single color.</span>
+<span class="sd">        color_column (`str`): Name of column in dataframe containing data to color map</span>
+<span class="sd">            according to. If None, df must be None as well. All regions will be colored</span>
+<span class="sd">            a single color.</span>
+<span class="sd">        geo_column (`str`): Name of column in dataframe containing geographic key that</span>
+<span class="sd">            can join to `key_on` in geoJson. If None, df must be None as well. All regions</span>
+<span class="sd">            will be colored a single color.</span>
+<span class="sd">        geo_type (`str`): If provided, maps to a geo_data and key_on for a given geography</span>
+<span class="sd">        type. Default None. Must provide this or geo_data and key_on. See geo_type options above.</span>
+<span class="sd">        geo_data (`str`): URL, file path, or data (json, dict, geopandas, etc) to your</span>
+<span class="sd">            GeoJSON geometries. Required if geo_type not provided.</span>
+<span class="sd">        key_on (`str`): Variable in the geo_data GeoJSON file to bind the data to. Must start</span>
+<span class="sd">            with ‘feature’ and be in JavaScript objection notation. Ex: ‘feature.id’ or</span>
+<span class="sd">            ‘feature.properties.statename’. If not provided, must have geo_type specified.</span>
+<span class="sd">        legend_name (`str`): Name of legend. If None, legend will be labeled with</span>
+<span class="sd">            `color_column` name formatted witH underscores removed.</span>
+<span class="sd">        fmap (folium.Map): map object. Default None - will create new map.</span>
+<span class="sd">        reset (bool): Default True. Clears map data from fmap object.</span>
+<span class="sd">        fill_color (`str`):Area fill color. Can pass a hex code, color name,</span>
+<span class="sd">                or if you are binding data, one of the following color brewer palettes:</span>
+<span class="sd">                ‘BuGn’, ‘BuPu’, ‘GnBu’, ‘OrRd’, ‘PuBu’, ‘PuBuGn’, ‘PuRd’, ‘RdPu’,</span>
+<span class="sd">                ‘YlGn’, ‘YlGnBu’, ‘YlOrBr’, and ‘YlOrRd’. Default given by vh.geo_formatting.</span>
+<span class="sd">        filter_geos (`bool`): If True,  will filter out all geoJSON entries for regions not</span>
+<span class="sd">            included in the dataframe, `df`. This is typically necessary as folium generally</span>
+<span class="sd">            won&#39;t plot anything if there isn&#39;t a match for each region.</span>
+<span class="sd">        threshold_scale (list): List of thresholds for coloring the data. The list must have more than three values,</span>
+<span class="sd">            each item must be larger in value than the last. All data must have values between the first and</span>
+<span class="sd">            last items of the list. Example: [100, 200, 300, 400] In this case, all data in df[color_column] must</span>
+<span class="sd">            be between 100 and 400.</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.</span>
+<span class="sd">            zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting</span>
+<span class="sd">            tiles (`str`): Name of folium tiles to use. Default given by vh.geo_formatting.</span>
+<span class="sd">            fill_opacity (`float`): Opacity of area fill, range 0-1. Default given by vh.geo_formatting.</span>
+<span class="sd">            line_opacity (`float`): Opacity of line, range 0-1. Default given by vh.geo_formatting.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        fmap (folium.Map): Map with geographic regions colored according to provided data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># If not data is provided, a single color will be used to color in everything in the geo_data</span>
+    <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">color_column</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">geo_column</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> \
+            <span class="s1">&#39;No data provided, color_column must be None as all regions will be colored the same&#39;</span>
+
+        <span class="c1"># The choropleth function will return nothing if a colormap name is given (e.g. GnBu) so must give one color</span>
+        <span class="n">fill_color</span> <span class="o">=</span> <span class="n">geoformatting</span><span class="p">[</span><span class="s1">&#39;fill_color_single&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">fill_color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">fill_color</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">color_column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="s1">&#39;color_column must be provided to indicate which column to use in coloring&#39;</span>
+        <span class="k">assert</span> <span class="n">geo_column</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="s1">&#39;geo_column must be provided to indicate which column contains geographic key&#39;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Dataframe, df, must have at least one row of data to plot&#39;</span>
+
+        <span class="n">fill_color</span> <span class="o">=</span> <span class="n">geoformatting</span><span class="p">[</span><span class="s1">&#39;fill_color&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">fill_color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">fill_color</span>
+
+        <span class="c1"># Use `color_column` as legend label but format nicely</span>
+        <span class="k">if</span> <span class="n">legend_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">legend_name</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">labelfy</span><span class="p">(</span><span class="n">color_column</span><span class="p">)</span>
+
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">geo_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">geo_data</span> <span class="o">=</span> <span class="n">geos</span><span class="p">[</span><span class="n">geo_type</span><span class="p">][</span><span class="s2">&quot;geo_data&quot;</span><span class="p">]</span>
+            <span class="n">key_on</span> <span class="o">=</span> <span class="n">geos</span><span class="p">[</span><span class="n">geo_type</span><span class="p">][</span><span class="s2">&quot;key_on&quot;</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s1">&#39;Only options for geo_type are: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">geos</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Error with geo_type: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+
+    <span class="n">geojson_dict</span> <span class="o">=</span> <span class="n">read_geojson</span><span class="p">(</span><span class="n">geo_data</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_geos_original</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">geojson_dict</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">])</span>
+        <span class="n">json_key</span> <span class="o">=</span> <span class="n">key_on</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">geojson_dict</span><span class="p">,</span> <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">filter_geojson</span><span class="p">(</span><span class="n">geojson_dict</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">geo_column</span><span class="p">,</span> <span class="n">json_key</span><span class="p">,</span> <span class="n">filter_geos</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;geo_data reduced to </span><span class="si">%i</span><span class="s1"> regions from </span><span class="si">%i</span><span class="s1">&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">geojson_dict</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]),</span> <span class="n">n_geos_original</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_df</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No rows in the dataframe were found in the geoJSON so there is nothing to plot.&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmap</span> <span class="o">=</span> <span class="n">basic_map</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">folium</span><span class="o">.</span><span class="n">Choropleth</span><span class="p">(</span>
+        <span class="n">geo_data</span><span class="o">=</span><span class="n">geojson_dict</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+        <span class="n">threshold_scale</span><span class="o">=</span><span class="n">threshold_scale</span><span class="p">,</span>
+        <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">geo_column</span><span class="p">,</span> <span class="n">color_column</span><span class="p">],</span>
+        <span class="n">key_on</span><span class="o">=</span><span class="n">key_on</span><span class="p">,</span>
+        <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">,</span>
+        <span class="n">fill_color</span><span class="o">=</span><span class="n">fill_color</span><span class="p">,</span>
+        <span class="n">fill_opacity</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;fill_opacity&quot;</span><span class="p">),</span>
+        <span class="n">line_opacity</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;line_opacity&quot;</span><span class="p">),</span>
+        <span class="n">legend_name</span><span class="o">=</span><span class="n">legend_name</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="plot_subset"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.plot_subset">[docs]</a><span class="k">def</span> <span class="nf">plot_subset</span><span class="p">(</span><span class="n">plot_function</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">option_column</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">to_plot</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">option_column</span><span class="p">]</span> <span class="o">==</span> <span class="n">option</span><span class="p">]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">plot_function</span><span class="p">(</span><span class="n">to_plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<div class="viewcode-block" id="slider_interact"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.slider_interact">[docs]</a><span class="k">def</span> <span class="nf">slider_interact</span><span class="p">(</span><span class="n">plot_function</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">option_column</span><span class="p">,</span> <span class="n">initial_option</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">option_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">button_style</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">option_label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">option_label</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">labelfy</span><span class="p">(</span><span class="n">option_column</span><span class="p">)</span>
+
+    <span class="n">option_slider</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">SelectionSlider</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+                                            <span class="n">value</span><span class="o">=</span><span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">initial_option</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">initial_option</span><span class="p">,</span>
+                                            <span class="n">description</span><span class="o">=</span><span class="n">option_label</span><span class="p">,</span>
+                                            <span class="n">disabled</span><span class="o">=</span><span class="n">disabled</span><span class="p">,</span>
+                                            <span class="n">button_style</span><span class="o">=</span><span class="n">button_style</span><span class="p">)</span>
+
+    <span class="n">widgets</span><span class="o">.</span><span class="n">interact</span><span class="p">(</span><span class="n">plot_subset</span><span class="p">,</span> <span class="n">plot_function</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">plot_function</span><span class="p">),</span> <span class="n">df</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">df</span><span class="p">),</span>
+                     <span class="n">option</span><span class="o">=</span><span class="n">option_slider</span><span class="p">,</span> <span class="n">option_column</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">option_column</span><span class="p">),</span>
+                     <span class="n">kwargs</span><span class="o">=</span><span class="n">widgets</span><span class="o">.</span><span class="n">fixed</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+                     <span class="p">);</span></div>
+
+
+<div class="viewcode-block" id="add_latlons"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.add_latlons">[docs]</a><span class="k">def</span> <span class="nf">add_latlons</span><span class="p">(</span><span class="n">latlons</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">latlons</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">latlons</span> <span class="o">=</span> <span class="p">[</span><span class="n">latlons</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">latlons</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
+
+    <span class="n">color</span> <span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;color.single&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="p">[</span><span class="n">color</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">latlon</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">latlons</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">latlon</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;radius&quot;</span><span class="p">),</span>
+                      <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">fill_color</span><span class="o">=</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">line_color</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">line_color</span> <span class="o">=</span> <span class="p">[</span><span class="n">line_color</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlon</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_color</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">latlons</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">,</span> <span class="n">lcolor</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">latlons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">latlons</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">line_color</span><span class="p">):</span>
+            <span class="n">fmap</span> <span class="o">=</span> <span class="n">add_line</span><span class="p">(</span><span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="n">line_color</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="n">fmap</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="add_df_latlon"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.add_df_latlon">[docs]</a><span class="k">def</span> <span class="nf">add_df_latlon</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">lat_col</span><span class="o">=</span><span class="s2">&quot;lat&quot;</span><span class="p">,</span> <span class="n">lng_col</span><span class="o">=</span><span class="s2">&quot;lng&quot;</span><span class="p">,</span> <span class="n">radius_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">15000</span><span class="p">,</span>
+                  <span class="n">color_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_color_col</span><span class="o">=</span><span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="n">color_how</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">outline_color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raw_outline_color_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill_opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color_continuous_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">popup_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_popup_width</span><span class="o">=</span><span class="mi">2650</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add points to a map from data in a dataframe. Can color and size points based on data columns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df (pandas.DataFrame()): Dataframe containing at least `lat_col` and `lng_col`. If coloring according to</span>
+<span class="sd">            data or adding a popup, dataframe should contain color_col, popup_col, and/or raw_color_col.</span>
+<span class="sd">        lat_col (`str`): Name of column containing latitude</span>
+<span class="sd">        lng_col (`str`): Name of column containing longitude</span>
+<span class="sd">        radius_col (`str`): Name of column containing values for the radius of each point. Optional. If not provided,</span>
+<span class="sd">            `radius` will be used for all points.</span>
+<span class="sd">        radius (`int`): Radius of point if constant for all points. Default 15000.</span>
+<span class="sd">        color_col (`str`): Name of column containing data to color the points according to. Must provide `color_how` to</span>
+<span class="sd">        raw_color_col (`str`): If color_how=&#39;raw&#39;, name of column containing raw color name for each point. If</span>
+<span class="sd">            color_how = &#39;continuous&#39; or &#39;categorical&#39;, color assignments will be put in a column named `raw_color_col`.</span>
+<span class="sd">            Default is &#39;color&#39;. It will not be used if `color_how` is not provided.</span>
+<span class="sd">        color_how: How to color the points. Options include:</span>
+<span class="sd">            * None: The color provided in `colors` will be used for all points. If colors contains a list, the first</span>
+<span class="sd">                color in the list will be used.</span>
+<span class="sd">            * Raw: The color in `raw_color_col` will be used as the color for each point.</span>
+<span class="sd">            * Continuous: Points will be colored based on a colormap and the values of data in the `color_col</span>
+<span class="sd">        colors (`str` or `list`): If `color_col` and `raw_color_col` are None, value or first value of list are used</span>
+<span class="sd">            to color each point. If `color_col` is not None and `color_how` = &#39;categorical&#39;, list of colors is used.</span>
+<span class="sd">        outline_color (`str`) If None, same as fill color specified by colors or color_how</span>
+<span class="sd">        raw_outline_color_col (`str`): name of column containing raw color name for the outline of each point.</span>
+<span class="sd">        fill (bool): If True, circles will be filled in with color. Default True.</span>
+<span class="sd">        fill_opacity (float): Opacity of area fill, range 0-1.</span>
+<span class="sd">        color_continuous_kwargs:</span>
+<span class="sd">        popup_col (`str`): Name of column containing information to display in a hover popup on map. Optional.</span>
+<span class="sd">        max_popup_width (`int`): Maximum width of popup box. Default 2650.</span>
+<span class="sd">        fmap (folium.Map): If a map object has already been created, it can be provided and points will be added to it.</span>
+<span class="sd">        **kwargs:</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">raw_color_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">raw_color_col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Using raw color in </span><span class="si">%s</span><span class="s1"> column&#39;</span><span class="p">,</span> <span class="n">raw_color_col</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">color_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> column already in dataframe so </span><span class="si">%s</span><span class="s1"> column will not be used. Change `raw_color_col` &#39;</span>
+                           <span class="s1">&#39;if you want a new color mapping to be created.&#39;</span><span class="p">,</span> <span class="n">raw_color_col</span><span class="p">,</span> <span class="n">color_col</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">color_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">color_how</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">color_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="n">new_color_column</span><span class="o">=</span><span class="n">raw_color_col</span><span class="p">,</span> <span class="n">colors</span><span class="o">=</span><span class="n">colors</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">color_how</span> <span class="o">==</span> <span class="s2">&quot;continuous&quot;</span><span class="p">:</span>
+            <span class="n">color_continuous_kwargs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">color_continuous_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">color_continuous_kwargs</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">vh</span><span class="o">.</span><span class="n">color_continuous</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">color_col</span><span class="p">,</span> <span class="n">new_color_column</span><span class="o">=</span><span class="n">raw_color_col</span><span class="p">,</span> <span class="o">**</span><span class="n">color_continuous_kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must specify color_how as &#39;categorical&#39; or &#39;continuous&#39; or change color_col to None&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">raw_color_col</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">formatting</span><span class="p">[</span><span class="s2">&quot;color.single&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span>
+
+    <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">),</span> <span class="n">tiles</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s1">&#39;tiles&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="p">[</span><span class="n">radius</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">radius_col</span><span class="p">]</span> <span class="k">if</span> <span class="n">radius_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">radius</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">color</span> <span class="k">if</span> <span class="n">raw_color_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">raw_color_col</span><span class="p">]</span>
+        <span class="n">outline_color</span> <span class="o">=</span> <span class="n">color</span> <span class="k">if</span> <span class="n">outline_color</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">outline_color</span>
+        <span class="n">outline_color</span> <span class="o">=</span> <span class="n">outline_color</span> <span class="k">if</span> <span class="n">raw_outline_color_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">raw_outline_color_col</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">popup_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">popup</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">popup_col</span><span class="p">]</span>
+            <span class="n">popup</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Popup</span><span class="p">(</span><span class="n">popup</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="n">max_popup_width</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">popup</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">lat_col</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">lng_col</span><span class="p">]</span>
+
+        <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">),</span> <span class="n">radius</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">popup</span><span class="o">=</span><span class="n">popup</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span>
+                      <span class="n">fill</span><span class="o">=</span><span class="n">fill</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">outline_color</span><span class="p">,</span>  <span class="n">fill_color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                      <span class="n">fill_opacity</span><span class="o">=</span><span class="n">fill_opacity</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="add_line"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.add_line">[docs]</a><span class="k">def</span> <span class="nf">add_line</span><span class="p">(</span><span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">,</span> <span class="n">line_color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">fmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">getfmt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">geoformatting</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">fmap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fmap</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;location_start&quot;</span><span class="p">),</span> <span class="n">zoom_start</span><span class="o">=</span><span class="n">getfmt</span><span class="p">(</span><span class="s2">&quot;zoom_start&quot;</span><span class="p">))</span>
+
+    <span class="n">folium</span><span class="o">.</span><span class="n">PolyLine</span><span class="p">([[</span><span class="n">latlonA</span><span class="p">,</span> <span class="n">latlonB</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="n">line_color</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">fmap</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fmap</span></div>
+
+
+<div class="viewcode-block" id="html_to_png"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.html_to_png">[docs]</a><span class="k">def</span> <span class="nf">html_to_png</span><span class="p">(</span><span class="n">htmlpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pngpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2560</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5625</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pngpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must give at least htmlpath or pngpath&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">htmlpath</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.html&#39;</span> <span class="o">%</span> <span class="n">pngpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">pngpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pngpath</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">htmlpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">tmpurl</span> <span class="o">=</span> <span class="s1">&#39;file://</span><span class="si">{htmlpath}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">htmlpath</span><span class="o">=</span><span class="n">htmlpath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">browser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+        <span class="n">browser</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Safari</span><span class="p">()</span>
+
+    <span class="n">browser</span><span class="o">.</span><span class="n">set_window_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">width</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+
+    <span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tmpurl</span><span class="p">)</span>
+
+    <span class="c1"># Give the map tiles some time to load</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+    <span class="n">browser</span><span class="o">.</span><span class="n">save_screenshot</span><span class="p">(</span><span class="n">pngpath</span><span class="p">)</span>
+    <span class="n">browser</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="save_map"><a class="viewcode-back" href="../../../vishelper.geo.html#vishelper.geo.geo.save_map">[docs]</a><span class="k">def</span> <span class="nf">save_map</span><span class="p">(</span><span class="n">fmap</span><span class="p">,</span> <span class="n">htmlpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pngpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">png</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">2560</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5625</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pngpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must give at least htmlpath or pngpath&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">htmlpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">htmlpath</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.html&#39;</span> <span class="o">%</span> <span class="n">pngpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">png</span> <span class="ow">and</span> <span class="n">pngpath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pngpath</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.png&#39;</span> <span class="o">%</span> <span class="n">htmlpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">fmap</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">htmlpath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">png</span><span class="p">:</span>
+        <span class="n">html_to_png</span><span class="p">(</span><span class="n">htmlpath</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">htmlpath</span><span class="p">),</span> <span class="n">pngpath</span><span class="o">=</span><span class="n">pngpath</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">,</span>
+                    <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span> <span class="n">browser</span><span class="o">=</span><span class="n">browser</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Chloe Mawer.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
