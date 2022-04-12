@@ -90,32 +90,32 @@ def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
             * If None, `df` must be provided and `kind` must be 'heatmap'.
         y (optional):
             Univariate: `None` (default)
-            For one bivariate dataset: `list` or `np.array` of y-data  or `str`
-                denoting column of `df` to use for y-data.
-            More than one bivariate dataset: `list` of `list` of y-data sets or
-                `list` of `str` with columns to be used for y-data.
+            For one bivariate dataset: `list` or `np.array` of y-data  or \
+                `str` denoting column of `df` to use for y-data.
+            More than one bivariate dataset: `list` of `list` of y-data sets \
+                 or `list` of `str` with columns to be used for y-data.
         kind (:obj:`str`, optional): Type of plot. Defaults to None,
             which implies `plot_function` must be given. Options for `kind`:
 
 
             Univariate, continuous data (`y=None`):
 
-        * `hist` (histogram)
+            * `hist` (histogram)
 
-        Bivariate, continous x continuous data:
+            Bivariate, continous x continuous data:
 
-        * `scatter`
-        * `line`
+            * `scatter`
+            * `line`
 
-        Bivariate, categorical x continuous data:
+            Bivariate, categorical x continuous data:
 
-        * `boxplot`
-        * `bar`
-        * `barh` (horizontal bar plot)
+            * `boxplot`
+            * `bar`
+            * `barh` (horizontal bar plot)
 
-        Multivariate, continuous data (`x=None`, `y=None`, `df != None`):
+            Multivariate, continuous data (`x=None`, `y=None`, `df != None`):
 
-        * `heatmap`
+            * `heatmap`
 
         df: Dataframe containing the data to be plotted. Default None. Data
             must be provided in `x` (and `y` if bivariate)
