@@ -19,7 +19,9 @@ geos = dict(usstates=dict(geo_data=to_geo_dir("us-states.json"), key_on='feature
             zip3s=dict(geo_data=to_geo_dir("us-zip3s.json"), key_on='feature.properties.zip3'),
             zip3=dict(geo_data=to_geo_dir("us-zip3s.json"), key_on='feature.properties.zip3'),
             kma=dict(geo_data=to_geo_dir("us-kmas.json"), key_on='feature.properties.dat_market_area_id'),
-            kmas=dict(geo_data=to_geo_dir("us-kmas.json"), key_on='feature.properties.dat_market_area_id')
+            kmas=dict(geo_data=to_geo_dir("us-kmas.json"), key_on='feature.properties.dat_market_area_id'),
+            division=dict(geo_data=to_geo_dir("state-divisions.json"), key_on='feature.properties.division'),
+            divisions=dict(geo_data=to_geo_dir("state-divisions.json"), key_on='feature.properties.division')
             )
 
 abspath_to_states = os.path.abspath(os.path.join(os.path.dirname(__file__), "data/state-abbs.json"))
@@ -392,7 +394,8 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
 
     if browser is None:
         from selenium import webdriver
-        browser = webdriver.Safari()
+        import chromedriver_binary
+        browser = webdriver.Chrome()
 
     browser.set_window_size(width, width * ratio)
 
