@@ -394,8 +394,7 @@ def html_to_png(htmlpath=None, pngpath=None, delay=5, width=2560, ratio=0.5625, 
 
     if browser is None:
         from selenium import webdriver
-        import chromedriver_binary
-        browser = webdriver.Chrome()
+        browser = webdriver.Safari()
 
     browser.set_window_size(width, width * ratio)
 
