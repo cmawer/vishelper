@@ -116,7 +116,7 @@ def read_geojson(geo_data):
 
 def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_data=None, key_on=None,
              legend_name=None, fmap=None, reset=True, fill_color=None, filter_geos=True, threshold_scale=None,
-             **kwargs):
+             colorbar_off=False, **kwargs):
     """Creates a choropleth map based on a dataframe. Colors regions in a map based on provided data.
 
     Must provide geo_type *or* geo_data and key_on.
@@ -159,6 +159,7 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
             each item must be larger in value than the last. All data must have values between the first and
             last items of the list. Example: [100, 200, 300, 400] In this case, all data in df[color_column] must
             be between 100 and 400.
+        colorbar_off (`bool`): If True, will remove colorbar legend
         **kwargs:
             location_start (tuple): Lat/lon to center map on to begin with. Default given by vh.geo_formatting.
             zoom_start (int): Level of zoom, 1-10. Default given by vh.geo_formatting
@@ -211,7 +212,7 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
     if fmap is None:
         fmap = basic_map(**kwargs)
 
-    folium.Choropleth(
+    choropleth = folium.Choropleth(
         geo_data=geojson_dict,
         data=df,
         threshold_scale=threshold_scale,
@@ -221,7 +222,13 @@ def plot_map(df=None, color_column=None, geo_column=None, geo_type=None, geo_dat
         fill_color=fill_color,
         fill_opacity=getfmt("fill_opacity"),
         line_opacity=getfmt("line_opacity"),
-        legend_name=legend_name).add_to(fmap)
+        legend_name=legend_name)
+
+    if colorbar_off is True:
+        for key in choropleth._children:
+            if key.startswith('color_map'):
+                del(choropleth._children[key])
+    choropleth.add_to(fmap)
 
     return fmap
 
