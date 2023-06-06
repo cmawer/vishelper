@@ -47,7 +47,7 @@ def plotxy(x, y, ax, plot_function, plot_color, df=None, labels=None, stacked=Fa
 
 
 plot_functions = dict(hist=plots.hist, scatter=plots.scatter, barh=plots.barh, bar=plots.bar, line=plots.line,
-                      boxplot=plots.boxplot, heatmap=plots.heatmap)
+                      boxplot=plots.boxplot, heatmap=plots.heatmap, scatter_density=plots.scatter_density.scatter_density)
 
 
 def plot(x=None, y=None, df=None, kind=None, plot_function=None, ax=None,
