@@ -5,7 +5,7 @@ from vishelper.config import formatting
 import vishelper.helpers as helpers
 
 
-def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, **kwargs):
+def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, aspect=None, **kwargs):
     """Creates a scatter plot of (x, y)
 
     Args:
@@ -42,6 +42,9 @@ def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=F
 
     if logy:
         ax.set_yscale("log");
+
+    if aspect:
+        ax.set_aspect(aspect)
 
     ax.scatter(x, y, color=color, s=size, alpha=alpha, **kwargs)
 

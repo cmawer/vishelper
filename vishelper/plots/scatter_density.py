@@ -36,7 +36,7 @@ def density(x, y, ax=None, sort=True, bins=20, cmap='gnuplot2', colorbar_off=Fal
     return ax
 
 
-def scatter_density(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, **kwargs):
+def scatter_density(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, aspect=None, **kwargs):
     """Creates a scatter plot of (x, y) colored by density
 
     Args:
@@ -73,6 +73,9 @@ def scatter_density(x, y, ax=None, color=None, size=None, alpha=None, logx=False
 
     if logy:
         ax.set_yscale("log");
+
+    if aspect:
+        ax.set_aspect(aspect)
 
     density(x, y, ax=ax, s=size, alpha=alpha, **kwargs)
 
