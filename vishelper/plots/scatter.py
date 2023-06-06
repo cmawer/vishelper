@@ -1,11 +1,42 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import cm
+from scipy.interpolate import interpn
+from matplotlib.colors import Normalize
 
 from vishelper.config import formatting
 import vishelper.helpers as helpers
 
 
-def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, aspect=None, **kwargs):
+def scatter_density(x, y, ax=None, sort=True, bins=20, cmap='gnuplot2', colorbar_off=False, **kwargs):
+    """
+    Scatter plot colored by 2d histogram
+    """
+    if ax is None:
+        fig, ax = plt.subplots()
+    data, x_e, y_e = np.histogram2d(x, y, bins=bins, density=True)
+    z = interpn((0.5 * (x_e[1:] + x_e[:-1]), 0.5 * (y_e[1:] + y_e[:-1])), data, np.vstack([x, y]).T, method="splinef2d",
+                bounds_error=False)
+
+    # To be sure to plot all data
+    z[np.where(np.isnan(z))] = 0.0
+
+    # Sort the points by density, so that the densest points are plotted last
+    if sort:
+        idx = z.argsort()
+        x, y, z = x[idx], y[idx], z[idx]
+
+    ax.scatter(x, y, c=z, cmap=cmap, **kwargs)
+
+    norm = Normalize(vmin=np.min(z), vmax=np.max(z))
+    if colorbar_off is False:
+        cbar = plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=ax)
+        cbar.ax.set_ylabel('Density')
+
+    return ax
+
+
+def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=False, aspect=None, density=False, colorbar_off=False, **kwargs):
     """Creates a scatter plot of (x, y)
 
     Args:
@@ -46,7 +77,10 @@ def scatter(x, y, ax=None, color=None, size=None, alpha=None, logx=False, logy=F
     if aspect:
         ax.set_aspect(aspect)
 
-    ax.scatter(x, y, color=color, s=size, alpha=alpha, **kwargs)
+    if density:
+        scatter_density(x, y, ax=ax, s=size, alpha=alpha, colorbar_off=colorbar_off, **kwargs)
+    else:
+        ax.scatter(x, y, color=color, s=size, alpha=alpha, **kwargs)
 
     if fig is None:
         return ax

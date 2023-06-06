@@ -4,4 +4,3 @@ from vishelper.plots.line import *
 from vishelper.plots.scatter import *
 from vishelper.plots.boxplot import *
 from vishelper.plots.heatmap import *
-from vishelper.plots.scatter_density import *
