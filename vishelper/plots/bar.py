@@ -52,7 +52,10 @@ def bar(x, y, ax=None, color=None, label=None, stacked=False, grouped=False, gro
     bottom = np.zeros(len(xticks))  # Assuming len(x) same for all x
     for j, oney in enumerate(y):
         lab = None if label is None and groups is None else groups[j] if label is None else label
-        col = color if isinstance(color, str) else color[j]
+        if not stacked and not grouped:
+            col = color
+        else:
+            col = color[j]
         onex = xbars[j::n_groups] if grouped else xbars
         ax.bar(
             onex,
