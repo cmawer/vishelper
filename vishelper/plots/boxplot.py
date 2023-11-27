@@ -44,7 +44,7 @@ def boxplot(x, y, hue=None, data=None, orient='v', ax=None,
     ax = sns.boxplot(x=x, y=y, data=data, palette=palette, hue=hue, ax=ax, orient=orient, **kwargs)
 
     if color_map is not None or face_color is not None:
-        for i, box in enumerate(ax.artists):
+        for i, box in enumerate(ax.patches):
             if color_map is not None:
                 if orient == 'v':
                     label = ax.get_xticklabels()[i].get_text()
@@ -55,9 +55,9 @@ def boxplot(x, y, hue=None, data=None, orient='v', ax=None,
             box.set_edgecolor(edge_color)
             box.set_facecolor(face_color)
 
-            # iterate over whiskers and median lines
-            for j in range(6 * i, 6 * (i + 1)):
-                ax.lines[j].set_color(edge_color)
+        # iterate over whiskers and median lines
+        for j in range(0, len(ax.lines)):
+            ax.lines[j].set_color(edge_color)
 
     if xrotation is not None:
         _ = ax.set_xticklabels(ax.get_xticklabels(), rotation=xrotation)
